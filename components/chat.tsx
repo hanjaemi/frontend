@@ -29,38 +29,33 @@ export function Chat({
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [messageCounter, setMessageCounter] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [processedItems, setProcessedItems] = useState<Set<string>>(new Set());
 
   const generateMessageId = () => {
     return `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   };
 
   useEffect(() => {
-    if (selectedGrammar && !processedItems.has(`grammar-${selectedGrammar}`)) {
+    if (selectedGrammar) {
       const newMessage: Message = {
         id: generateMessageId(),
-        content: `Tell me a little bit more about ${selectedGrammar} with 2 real live examples. Make it short as possible. Onyl key moments!`,
+        content: `Tell me a little bit more about ${selectedGrammar} with 2 real live examples. Make it short as possible. Onyl key moments! Im on level ${level} now!`,
         sender: "user",
       };
       setMessages((prev) => [...prev, newMessage]);
-      setProcessedItems(
-        (prev) => new Set([...prev, `grammar-${selectedGrammar}`])
-      );
+
       handleSubmit(newMessage.content);
     }
   }, [selectedGrammar]);
 
   useEffect(() => {
-    if (selectedWord && !processedItems.has(`word-${selectedWord}`)) {
+    if (selectedWord) {
       const newMessage: Message = {
         id: generateMessageId(),
         content: `Can you explain the usage of "${selectedWord}" and provide some example sentences? Make it short as possible. Onyl key moments!`,
         sender: "user",
       };
       setMessages((prev) => [...prev, newMessage]);
-      setProcessedItems((prev) => new Set([...prev, `word-${selectedWord}`]));
       handleSubmit(newMessage.content);
     }
   }, [selectedWord]);
@@ -132,7 +127,7 @@ export function Chat({
   };
 
   return (
-    <div className="flex flex-col h-[600px] border rounded-lg">
+    <div className="flex flex-col h-[800px] border rounded-lg">
       <ScrollArea className="flex-1 p-4">
         <div className="space-y-4">
           {messages.map((message) => (

@@ -104,9 +104,9 @@ export default function StudyPage({
       <Button variant="ghost" onClick={handleBack} className="mb-4">
         <ArrowLeft className="mr-2 h-4 w-4" /> Back to Search
       </Button>
-      <h1 className="mb-8 text-3xl font-bold">
+      {/* <h1 className="mb-8 text-3xl font-bold">
         {type === "youtube" ? "YouTube Video Study" : "Song Lyrics Study"}
-      </h1>
+      </h1> */}
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="space-y-6">
           <Card className="p-4">
