@@ -102,8 +102,10 @@ export function Sidebar({
         )}
       >
         <div className="flex items-center gap-2 pl-4">
-          <JaemiLogo />
-          {open && <h1 className="text-2xl font-bold">Jaemi</h1>}
+          <Link href="/" className="flex items-center gap-2">
+            <JaemiLogo />
+            {open && <h1 className="text-2xl font-bold">Jaemi</h1>}
+          </Link>
         </div>
         <Button
           variant="ghost"
