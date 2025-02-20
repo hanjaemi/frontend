@@ -31,9 +31,11 @@ const typeDescriptions = {
 export function Grammar({
   level,
   onGrammarClick,
+  disabled,
 }: {
   level: string;
   onGrammarClick: (grammar: string, timestamp?: string) => void;
+  disabled?: boolean;
 }) {
   const grammarRules = [
     {
@@ -71,6 +73,7 @@ export function Grammar({
                 variant="outline"
                 className="w-full h-auto py-3 justify-start text-left hover:bg-muted"
                 onClick={() => onGrammarClick(rule.title, rule.timestamp)}
+                disabled={disabled}
               >
                 <div className="flex items-start gap-4 min-h-[64px]">
                   <Tooltip>

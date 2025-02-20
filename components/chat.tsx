@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import ReactMarkdown from "react-markdown";
 
 interface Message {
   id: string;
@@ -16,10 +17,12 @@ export function Chat({
   level,
   selectedGrammar,
   selectedWord,
+  onLoadingChange,
 }: {
   level: string;
   selectedGrammar: string | null;
   selectedWord: string | null;
+  onLoadingChange?: (loading: boolean) => void;
 }) {
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -60,6 +63,10 @@ export function Chat({
       handleSubmit(newMessage.content);
     }
   }, [selectedWord]);
+
+  useEffect(() => {
+    onLoadingChange?.(isLoading);
+  }, [isLoading, onLoadingChange]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -150,7 +157,9 @@ export function Chat({
                     : "bg-primary text-primary-foreground"
                 }`}
               >
-                {message.content}
+                <ReactMarkdown className="prose-sm dark:prose-invert break-words">
+                  {message.content}
+                </ReactMarkdown>
               </div>
             </div>
           ))}
@@ -176,9 +185,12 @@ export function Chat({
           placeholder="Type your message..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+          onKeyDown={(e) => e.key === "Enter" && !isLoading && sendMessage()}
+          disabled={isLoading}
         />
-        <Button onClick={sendMessage}>Send</Button>
+        <Button onClick={sendMessage} disabled={isLoading}>
+          Send
+        </Button>
       </div>
     </div>
   );

@@ -1,34 +1,43 @@
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Bookmark, Star, Clock } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Bookmark, Star, Clock } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface VocabularyWord {
-  id: string
-  word: string
-  meaning: string
-  type: "common" | "important" | "new"
-  timestamp?: string
+  id: string;
+  word: string;
+  meaning: string;
+  type: "common" | "important" | "new";
+  timestamp?: string;
 }
 
 const typeIcons = {
   common: Bookmark,
   important: Star,
   new: Clock,
-}
+};
 
 const typeDescriptions = {
   common: "Common vocabulary word",
   important: "Important vocabulary to remember",
   new: "Newly introduced vocabulary",
-}
+};
 
 export function Vocabulary({
-  level,
+  type,
+  id,
   onWordClick,
+  disabled,
 }: {
-  level: string
-  onWordClick?: (word: string, timestamp?: string) => void
+  type: string;
+  id: string;
+  onWordClick: (word: string, timestamp?: string) => void;
+  disabled?: boolean;
 }) {
   const vocabularyWords = [
     {
@@ -52,20 +61,23 @@ export function Vocabulary({
       type: "new",
       timestamp: "2:30",
     },
-  ]
+  ];
 
   return (
     <TooltipProvider>
       <ScrollArea className="h-full">
         <div className="space-y-4 p-4">
           {vocabularyWords.map((word) => {
-            const Icon = typeIcons[word.type]
+            const Icon = typeIcons[word.type];
             return (
               <Button
                 key={word.id}
                 variant="outline"
                 className="w-full h-auto py-3 justify-start text-left hover:bg-muted"
-                onClick={() => onWordClick && onWordClick(word.word, word.timestamp)}
+                onClick={() =>
+                  onWordClick && onWordClick(word.word, word.timestamp)
+                }
+                disabled={disabled}
               >
                 <div className="flex items-start gap-4 min-h-[64px]">
                   <Tooltip>
@@ -80,16 +92,21 @@ export function Vocabulary({
                   </Tooltip>
                   <div className="flex-1 space-y-1">
                     <h3 className="font-semibold leading-none">{word.word}</h3>
-                    <p className="text-sm text-muted-foreground">{word.meaning}</p>
-                    {word.timestamp && <p className="text-xs text-muted-foreground">Timestamp: {word.timestamp}</p>}
+                    <p className="text-sm text-muted-foreground">
+                      {word.meaning}
+                    </p>
+                    {word.timestamp && (
+                      <p className="text-xs text-muted-foreground">
+                        Timestamp: {word.timestamp}
+                      </p>
+                    )}
                   </div>
                 </div>
               </Button>
-            )
+            );
           })}
         </div>
       </ScrollArea>
     </TooltipProvider>
-  )
+  );
 }
-
