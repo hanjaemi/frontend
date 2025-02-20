@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Loader2 } from "lucide-react";
 
 interface Message {
   id: string;
@@ -29,11 +30,11 @@ export function Chat({
     },
   ]);
   const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [messageCounter, setMessageCounter] = useState(0);
 
   const generateMessageId = () => {
-    setMessageCounter((prev) => prev + 1);
-    return `msg-${Date.now()}-${messageCounter}`;
+    return `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   };
 
   useEffect(() => {
@@ -44,6 +45,7 @@ export function Chat({
         sender: "user",
       };
       setMessages((prev) => [...prev, newMessage]);
+      handleSubmit(newMessage.content);
     }
   }, [selectedGrammar]);
 
@@ -55,21 +57,13 @@ export function Chat({
         sender: "user",
       };
       setMessages((prev) => [...prev, newMessage]);
-      setTimeout(() => {
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: generateMessageId(),
-            content: `Of course! Let's look at "${selectedWord}" in more detail. Here are some examples...`,
-            sender: "assistant",
-          },
-        ]);
-      }, 1000);
+      handleSubmit(newMessage.content);
     }
   }, [selectedWord]);
 
   const handleSubmit = async (message: string) => {
     try {
+      setIsLoading(true);
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: {
@@ -96,6 +90,8 @@ export function Chat({
     } catch (error) {
       console.error("Chat error:", error);
       throw error; // Re-throw to handle in sendMessage
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -120,32 +116,46 @@ export function Chat({
   };
 
   return (
-    <div className="flex h-[600px] flex-col">
+    <div className="flex flex-col h-[600px] border rounded-lg">
       <ScrollArea className="flex-1 p-4">
         <div className="space-y-4">
           {messages.map((message) => (
             <div
               key={message.id}
               className={`flex items-start gap-3 ${
-                message.sender === "user" ? "flex-row-reverse" : ""
+                message.sender === "assistant" ? "flex-row" : "flex-row-reverse"
               }`}
             >
-              <Avatar>
+              <Avatar
+                className={
+                  message.sender === "assistant" ? "bg-primary" : "bg-muted"
+                }
+              >
                 <AvatarFallback>
-                  {message.sender === "user" ? "U" : "A"}
+                  {message.sender === "assistant" ? "AI" : "You"}
                 </AvatarFallback>
               </Avatar>
               <div
-                className={`rounded-lg px-4 py-2 ${
-                  message.sender === "user"
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted"
+                className={`rounded-lg px-3 py-2 max-w-[80%] ${
+                  message.sender === "assistant"
+                    ? "bg-muted"
+                    : "bg-primary text-primary-foreground"
                 }`}
               >
                 {message.content}
               </div>
             </div>
           ))}
+          {isLoading && (
+            <div className="flex items-start gap-3">
+              <Avatar className="bg-primary">
+                <AvatarFallback>AI</AvatarFallback>
+              </Avatar>
+              <div className="rounded-lg px-3 py-2 bg-muted">
+                <Loader2 className="h-4 w-4 animate-spin" />
+              </div>
+            </div>
+          )}
         </div>
       </ScrollArea>
       <div className="flex gap-2 border-t p-4">
