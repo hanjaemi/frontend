@@ -1,10 +1,10 @@
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface SummarySection {
-  id: string
-  title: string
-  content: string[]
+  id: string;
+  title: string;
+  content: string[];
 }
 
 const summaryData: SummarySection[] = [
@@ -20,7 +20,11 @@ const summaryData: SummarySection[] = [
   {
     id: "2",
     title: "Essential Vocabulary",
-    content: ["Greetings and basic expressions", "Numbers and counting systems", "Common verbs and adjectives"],
+    content: [
+      "Greetings and basic expressions",
+      "Numbers and counting systems",
+      "Common verbs and adjectives",
+    ],
   },
   {
     id: "3",
@@ -31,19 +35,28 @@ const summaryData: SummarySection[] = [
       "Cultural context for formal vs. informal speech",
     ],
   },
-]
+  {
+    id: "4",
+    title: "Cultural Notes",
+    content: [
+      "Honorific system in Korean language",
+      "Age-based speech levels",
+      "Cultural context for formal vs. informal speech",
+    ],
+  },
+];
 
 export function Summary({ level }: { level: string }) {
   return (
-    <ScrollArea className="h-[600px] pr-4">
-      <div className="space-y-6">
+    <ScrollArea className="h-[600px] pr-4 mt-4">
+      <div className="space-y-4">
         {summaryData.map((section) => (
           <Card key={section.id}>
             <CardHeader>
               <CardTitle>{section.title}</CardTitle>
             </CardHeader>
             <CardContent>
-              <ul className="list-inside list-disc space-y-2">
+              <ul className="list-inside list-disc space-y-1">
                 {section.content.map((item, index) => (
                   <li key={index} className="text-sm text-muted-foreground">
                     {item}
@@ -55,6 +68,5 @@ export function Summary({ level }: { level: string }) {
         ))}
       </div>
     </ScrollArea>
-  )
+  );
 }
-

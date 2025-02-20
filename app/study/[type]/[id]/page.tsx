@@ -25,6 +25,7 @@ export default function StudyPage({
   const [selectedGrammar, setSelectedGrammar] = useState<string | null>(null);
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
   const [isChatLoading, setIsChatLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState("chat");
   const videoRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
@@ -51,13 +52,15 @@ export default function StudyPage({
       setSelectedGrammar(null); // Reset first to ensure the effect triggers
       setTimeout(() => {
         setSelectedGrammar(grammar);
+        setActiveTab("chat");
         if (timestamp && videoRef.current) {
           const seconds = convertTimestampToSeconds(timestamp);
-          const iframe = videoRef.current as HTMLIFrameElement & {
-            contentWindow: {
-              postMessage: (message: any, target: string) => void;
+          const iframe =
+            videoRef.current as HThandleGrammarClickMLIFrameElement & {
+              contentWindow: {
+                postMessage: (message: any, target: string) => void;
+              };
             };
-          };
           iframe.contentWindow.postMessage(
             { event: "command", func: "seekTo", args: [seconds] },
             "*"
@@ -74,6 +77,7 @@ export default function StudyPage({
       setSelectedWord(null); // Reset first to ensure the effect triggers
       setTimeout(() => {
         setSelectedWord(word);
+        setActiveTab("chat");
         if (timestamp && videoRef.current) {
           const seconds = convertTimestampToSeconds(timestamp);
           const iframe = videoRef.current as HTMLIFrameElement & {
@@ -115,7 +119,7 @@ export default function StudyPage({
           </Card>
           {type === "youtube" && (
             <Card className="flex flex-col">
-              <Tabs defaultValue="grammar" className="flex flex-col flex-1">
+              <Tabs className="flex flex-col flex-1">
                 <TabsList className="w-full">
                   <TabsTrigger value="grammar">Grammar</TabsTrigger>
                   <TabsTrigger value="vocabulary">Vocabulary</TabsTrigger>
@@ -140,8 +144,12 @@ export default function StudyPage({
             </Card>
           )}
         </div>
-        <Card className="p-4  ">
-          <Tabs defaultValue="chat" className="h-full flex flex-col">
+        <Card className="p-4">
+          <Tabs
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className="h-full flex flex-col"
+          >
             <TabsList className="w-full">
               <TabsTrigger value="chat">Chat</TabsTrigger>
               <TabsTrigger value="flashcards">Flashcards</TabsTrigger>

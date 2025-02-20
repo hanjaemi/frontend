@@ -42,10 +42,18 @@ export default function LevelPage({ params }: { params: { id: string } }) {
               <TabsTrigger value="vocabulary">Vocabulary</TabsTrigger>
             </TabsList>
             <TabsContent value="grammar">
-              <Grammar level={params.id} onGrammarClick={handleGrammarClick} />
+              <Grammar
+                type="level"
+                level={params.id}
+                onGrammarClick={handleGrammarClick}
+              />
             </TabsContent>
             <TabsContent value="vocabulary">
-              <Vocabulary level={params.id} onWordClick={handleWordClick} />
+              <Vocabulary
+                type="level"
+                level={params.id}
+                onWordClick={handleWordClick}
+              />
             </TabsContent>
           </Tabs>
         </Card>

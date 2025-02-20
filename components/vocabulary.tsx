@@ -1,5 +1,5 @@
+import { Star, CircleDot, Sparkles } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Bookmark, Star, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -8,25 +8,79 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-interface VocabularyWord {
+type VocabType = "important" | "common" | "new";
+
+type VocabularyWord = {
   id: string;
   word: string;
   meaning: string;
-  type: "common" | "important" | "new";
-  timestamp?: string;
-}
+  type: VocabType;
+  timestamp: string;
+};
 
 const typeIcons = {
-  common: Bookmark,
   important: Star,
-  new: Clock,
-};
+  common: CircleDot,
+  new: Sparkles,
+} as const;
 
 const typeDescriptions = {
-  common: "Common vocabulary word",
-  important: "Important vocabulary to remember",
+  important: "Important vocabulary",
+  common: "Common vocabulary",
   new: "Newly introduced vocabulary",
-};
+} as const;
+
+const vocabularyWords: VocabularyWord[] = [
+  {
+    id: "1",
+    word: "도와주세요",
+    meaning: "Please help me",
+    type: "important",
+    timestamp: "0:05",
+  },
+  {
+    id: "2",
+    word: "저는",
+    meaning: "I am (polite)",
+    type: "common",
+    timestamp: "1:15",
+  },
+  {
+    id: "3",
+    word: "이름이",
+    meaning: "My name is",
+    type: "new",
+    timestamp: "2:30",
+  },
+  {
+    id: "4",
+    word: "국적이",
+    meaning: "I am from (polite)",
+    type: "important",
+    timestamp: "3:45",
+  },
+  {
+    id: "5",
+    word: "연락처",
+    meaning: "Contact information",
+    type: "common",
+    timestamp: "5:00",
+  },
+  {
+    id: "6",
+    word: "도서관",
+    meaning: "Library",
+    type: "new",
+    timestamp: "6:15",
+  },
+  {
+    id: "7",
+    word: "지하철",
+    meaning: "Subway",
+    type: "important",
+    timestamp: "7:30",
+  },
+];
 
 export function Vocabulary({
   type,
@@ -39,33 +93,9 @@ export function Vocabulary({
   onWordClick: (word: string, timestamp?: string) => void;
   disabled?: boolean;
 }) {
-  const vocabularyWords = [
-    {
-      id: "1",
-      word: "안녕하세요",
-      meaning: "Hello (formal)",
-      type: "common",
-      timestamp: "0:05",
-    },
-    {
-      id: "2",
-      word: "감사합니다",
-      meaning: "Thank you (formal)",
-      type: "important",
-      timestamp: "1:15",
-    },
-    {
-      id: "3",
-      word: "미안합니다",
-      meaning: "I'm sorry (formal)",
-      type: "new",
-      timestamp: "2:30",
-    },
-  ];
-
   return (
     <TooltipProvider>
-      <ScrollArea className="h-full">
+      <ScrollArea className={type === "level" ? "h-[600px]" : "h-[400px]"}>
         <div className="space-y-4 p-4">
           {vocabularyWords.map((word) => {
             const Icon = typeIcons[word.type];

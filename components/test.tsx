@@ -1,17 +1,17 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Label } from "@/components/ui/label"
-import { ScrollArea } from "@/components/ui/scroll-area"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface Question {
-  id: string
-  question: string
-  options: string[]
-  correctAnswer: number
+  id: string;
+  question: string;
+  options: string[];
+  correctAnswer: number;
 }
 
 const questions: Question[] = [
@@ -33,78 +33,118 @@ const questions: Question[] = [
     options: ["을/를", "이/가", "은/는", "에서"],
     correctAnswer: 1,
   },
-]
+  {
+    id: "4",
+    question: "What is the correct way to say 'I like something' in Korean?",
+    options: [
+      "저는 ~을/를 좋아합니다",
+      "~을/를 좋아합니다",
+      "저는 ~을/를 좋아요",
+      "~을/를 좋아요",
+    ],
+    correctAnswer: 0,
+  },
+  {
+    id: "5",
+    question: "What is the meaning of the Korean word '도서관'?",
+    options: ["Library", "School", "University", "Bookstore"],
+    correctAnswer: 0,
+  },
+  {
+    id: "6",
+    question: "What is the correct way to say 'What is your name?' in Korean?",
+    options: [
+      "당신의 이름은 무엇입니까?",
+      "당신의 이름은?",
+      "당신의 이름을 알려주세요",
+      "당신의 이름을",
+    ],
+    correctAnswer: 0,
+  },
+];
 
 export function Test({ level }: { level: string }) {
-  const [answers, setAnswers] = useState<Record<string, number>>({})
-  const [showResults, setShowResults] = useState(false)
+  const [answers, setAnswers] = useState<Record<string, number>>({});
+  const [showResults, setShowResults] = useState(false);
 
   const handleSubmit = () => {
-    setShowResults(true)
-  }
+    setShowResults(true);
+  };
 
   const getScore = () => {
     return Object.entries(answers).reduce((score, [questionId, answer]) => {
-      const question = questions.find((q) => q.id === questionId)
-      return score + (question?.correctAnswer === answer ? 1 : 0)
-    }, 0)
-  }
+      const question = questions.find((q) => q.id === questionId);
+      return score + (question?.correctAnswer === answer ? 1 : 0);
+    }, 0);
+  };
 
   return (
-    <ScrollArea className="h-[600px] pr-4">
-      <div className="space-y-6">
-        {questions.map((question) => (
-          <Card key={question.id}>
-            <CardHeader>
-              <CardTitle className="text-base">{question.question}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <RadioGroup
-                onValueChange={(value) =>
-                  setAnswers((prev) => ({
-                    ...prev,
-                    [question.id]: Number.parseInt(value),
-                  }))
-                }
-                value={answers[question.id]?.toString()}
-              >
-                {question.options.map((option, index) => (
-                  <div key={index} className="flex items-center space-x-2">
-                    <RadioGroupItem value={index.toString()} id={`${question.id}-${index}`} disabled={showResults} />
-                    <Label htmlFor={`${question.id}-${index}`}>{option}</Label>
+    <div className="pt-4">
+      <ScrollArea className="h-[600px] pr-4 mb-4">
+        <div className="space-y-4">
+          {questions.map((question) => (
+            <Card key={question.id}>
+              <CardHeader>
+                <CardTitle className="text-base">{question.question}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <RadioGroup
+                  onValueChange={(value) =>
+                    setAnswers((prev) => ({
+                      ...prev,
+                      [question.id]: Number.parseInt(value),
+                    }))
+                  }
+                  value={answers[question.id]?.toString()}
+                >
+                  {question.options.map((option, index) => (
+                    <div key={index} className="flex items-center space-x-2">
+                      <RadioGroupItem
+                        value={index.toString()}
+                        id={`${question.id}-${index}`}
+                        disabled={showResults}
+                      />
+                      <Label htmlFor={`${question.id}-${index}`}>
+                        {option}
+                      </Label>
+                    </div>
+                  ))}
+                </RadioGroup>
+                {showResults && (
+                  <div className="mt-4 text-sm">
+                    {answers[question.id] === question.correctAnswer ? (
+                      <p className="text-green-500">Correct!</p>
+                    ) : (
+                      <p className="text-red-500">
+                        Incorrect. The correct answer is:{" "}
+                        {question.options[question.correctAnswer]}
+                      </p>
+                    )}
                   </div>
-                ))}
-              </RadioGroup>
-              {showResults && (
-                <div className="mt-4 text-sm">
-                  {answers[question.id] === question.correctAnswer ? (
-                    <p className="text-green-500">Correct!</p>
-                  ) : (
-                    <p className="text-red-500">
-                      Incorrect. The correct answer is: {question.options[question.correctAnswer]}
-                    </p>
-                  )}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        ))}
-        {!showResults && (
-          <Button className="w-full" onClick={handleSubmit} disabled={Object.keys(answers).length !== questions.length}>
-            Submit Test
-          </Button>
-        )}
-        {showResults && (
-          <Card>
-            <CardContent className="p-6">
-              <p className="text-lg font-semibold">
-                Your Score: {getScore()} out of {questions.length}
-              </p>
-            </CardContent>
-          </Card>
-        )}
-      </div>
-    </ScrollArea>
-  )
+                )}
+              </CardContent>
+            </Card>
+          ))}
+          {showResults && (
+            <Card>
+              <CardContent className="p-6">
+                <p className="text-lg font-semibold">
+                  Your Score: {getScore()} out of {questions.length}
+                </p>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </ScrollArea>
+      {!showResults && (
+        <Button
+          className="w-full"
+          onClick={handleSubmit}
+          disabled={Object.keys(answers).length !== questions.length}
+        >
+          Submit Test
+        </Button>
+      )}
+    </div>
+  );
 }
-

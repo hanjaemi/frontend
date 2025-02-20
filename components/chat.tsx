@@ -44,7 +44,7 @@ export function Chat({
     if (selectedGrammar) {
       const newMessage: Message = {
         id: generateMessageId(),
-        content: `Tell me about the grammar point: ${selectedGrammar}`,
+        content: `Tell me a little bit more about ${selectedGrammar} with 2 real live examples. Make it short as possible. Onyl key moments!`,
         sender: "user",
       };
       setMessages((prev) => [...prev, newMessage]);
@@ -56,7 +56,7 @@ export function Chat({
     if (selectedWord) {
       const newMessage: Message = {
         id: generateMessageId(),
-        content: `Can you explain the usage of "${selectedWord}" and provide some example sentences?`,
+        content: `Can you explain the usage of "${selectedWord}" and provide some example sentences? Make it short as possible. Onyl key moments!`,
         sender: "user",
       };
       setMessages((prev) => [...prev, newMessage]);
