@@ -55,12 +55,11 @@ export default function StudyPage({
         setActiveTab("chat");
         if (timestamp && videoRef.current) {
           const seconds = convertTimestampToSeconds(timestamp);
-          const iframe =
-            videoRef.current as HThandleGrammarClickMLIFrameElement & {
-              contentWindow: {
-                postMessage: (message: any, target: string) => void;
-              };
+          const iframe = videoRef.current as HTMLIFrameElement & {
+            contentWindow: {
+              postMessage: (message: any, target: string) => void;
             };
+          };
           iframe.contentWindow.postMessage(
             { event: "command", func: "seekTo", args: [seconds] },
             "*"
@@ -119,7 +118,7 @@ export default function StudyPage({
           </Card>
           {type === "youtube" && (
             <Card className="flex flex-col">
-              <Tabs className="flex flex-col flex-1">
+              <Tabs className="flex flex-col flex-1" defaultValue="grammar">
                 <TabsList className="w-full">
                   <TabsTrigger value="grammar">Grammar</TabsTrigger>
                   <TabsTrigger value="vocabulary">Vocabulary</TabsTrigger>

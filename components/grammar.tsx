@@ -92,10 +92,12 @@ const grammarRules: GrammarRule[] = [
 
 export function Grammar({
   type,
+  id,
   onGrammarClick,
   disabled,
 }: {
   type: string;
+  id: string;
   onGrammarClick: (grammar: string, timestamp?: string) => void;
   disabled?: boolean;
 }) {

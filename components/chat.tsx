@@ -25,41 +25,42 @@ export function Chat({
   onLoadingChange?: (loading: boolean) => void;
 }) {
   const [messages, setMessages] = useState<Message[]>([
-    {
-      id: "1",
-      content: "안녕하세요! 한국어를 연습하고 싶으신가요?",
-      sender: "assistant",
-    },
+    { id: "", content: "안녕하세요, 어떻게 도와줗까?", sender: "assistant" },
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [messageCounter, setMessageCounter] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [processedItems, setProcessedItems] = useState<Set<string>>(new Set());
 
   const generateMessageId = () => {
     return `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   };
 
   useEffect(() => {
-    if (selectedGrammar) {
+    if (selectedGrammar && !processedItems.has(`grammar-${selectedGrammar}`)) {
       const newMessage: Message = {
         id: generateMessageId(),
         content: `Tell me a little bit more about ${selectedGrammar} with 2 real live examples. Make it short as possible. Onyl key moments!`,
         sender: "user",
       };
       setMessages((prev) => [...prev, newMessage]);
+      setProcessedItems(
+        (prev) => new Set([...prev, `grammar-${selectedGrammar}`])
+      );
       handleSubmit(newMessage.content);
     }
   }, [selectedGrammar]);
 
   useEffect(() => {
-    if (selectedWord) {
+    if (selectedWord && !processedItems.has(`word-${selectedWord}`)) {
       const newMessage: Message = {
         id: generateMessageId(),
         content: `Can you explain the usage of "${selectedWord}" and provide some example sentences? Make it short as possible. Onyl key moments!`,
         sender: "user",
       };
       setMessages((prev) => [...prev, newMessage]);
+      setProcessedItems((prev) => new Set([...prev, `word-${selectedWord}`]));
       handleSubmit(newMessage.content);
     }
   }, [selectedWord]);
