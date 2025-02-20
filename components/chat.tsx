@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Loader2 } from "lucide-react";
 
 interface Message {
   id: string;
@@ -32,6 +31,7 @@ export function Chat({
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [messageCounter, setMessageCounter] = useState(0);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const generateMessageId = () => {
     return `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -60,6 +60,14 @@ export function Chat({
       handleSubmit(newMessage.content);
     }
   }, [selectedWord]);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isLoading]);
 
   const handleSubmit = async (message: string) => {
     try {
@@ -152,10 +160,15 @@ export function Chat({
                 <AvatarFallback>AI</AvatarFallback>
               </Avatar>
               <div className="rounded-lg px-3 py-2 bg-muted">
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <div className="flex items-center gap-1">
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary animate-[bounce_0.8s_infinite]" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary animate-[bounce_0.8s_0.2s_infinite]" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary animate-[bounce_0.8s_0.4s_infinite]" />
+                </div>
               </div>
             </div>
           )}
+          <div ref={messagesEndRef} />
         </div>
       </ScrollArea>
       <div className="flex gap-2 border-t p-4">
