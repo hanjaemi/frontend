@@ -36,6 +36,19 @@ export function Chat({
   };
 
   useEffect(() => {
+    // Load messages from local storage when the component mounts
+    const storedMessages = localStorage.getItem("chatMessages");
+    if (storedMessages) {
+      setMessages(JSON.parse(storedMessages));
+    }
+  }, []);
+
+  useEffect(() => {
+    // Save messages to local storage whenever they change
+    localStorage.setItem("chatMessages", JSON.stringify(messages));
+  }, [messages]);
+
+  useEffect(() => {
     if (selectedGrammar) {
       const newMessage: Message = {
         id: generateMessageId(),

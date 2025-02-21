@@ -44,14 +44,14 @@ export default function LevelPage({ params }: { params: { id: string } }) {
             <TabsContent value="grammar">
               <Grammar
                 type="level"
-                level={params.id}
+                id={params.id}
                 onGrammarClick={handleGrammarClick}
               />
             </TabsContent>
             <TabsContent value="vocabulary">
               <Vocabulary
                 type="level"
-                level={params.id}
+                id={params.id}
                 onWordClick={handleWordClick}
               />
             </TabsContent>

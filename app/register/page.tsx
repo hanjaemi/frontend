@@ -1,5 +1,7 @@
 "use client";
 
+import type React from "react";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -42,29 +44,55 @@ const JaemiLogo = () => (
   </svg>
 );
 
-type LoginStep = "email" | "password";
+const trustedPartners = [
+  {
+    name: "Seoul National University",
+    logo: "/placeholder.svg?height=30&width=120",
+  },
+  {
+    name: "Korean Cultural Center",
+    logo: "/placeholder.svg?height=30&width=120",
+  },
+  {
+    name: "King Sejong Institute",
+    logo: "/placeholder.svg?height=30&width=120",
+  },
+  { name: "TOPIK Organization", logo: "/placeholder.svg?height=30&width=120" },
+];
 
-interface LoginState {
+type RegistrationStep = "email" | "details" | "verification";
+
+interface RegistrationState {
   email: string;
+  firstName: string;
+  lastName: string;
   password: string;
+  confirmPassword: string;
 }
 
-export default function Login() {
+export default function Register() {
   const router = useRouter();
-  const [currentStep, setCurrentStep] = useState<LoginStep>("email");
+  const [currentStep, setCurrentStep] = useState<RegistrationStep>("email");
   const [isLoading, setIsLoading] = useState(false);
-  const [formState, setFormState] = useState<LoginState>({
+  const [formState, setFormState] = useState<RegistrationState>({
     email: "",
+    firstName: "",
+    lastName: "",
     password: "",
+    confirmPassword: "",
   });
 
-  const updateFormState = (field: keyof LoginState, value: string) => {
+  const updateFormState = (field: keyof RegistrationState, value: string) => {
     setFormState((prev) => ({ ...prev, [field]: value }));
   };
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
+  };
+
+  const validatePassword = (password: string) => {
+    return password.length >= 8;
   };
 
   const handleContinue = async (e: React.FormEvent) => {
@@ -75,10 +103,18 @@ export default function Login() {
         toast.error("Please enter a valid email address");
         return;
       }
-      setCurrentStep("password");
-    } else if (currentStep === "password") {
-      if (!formState.password) {
-        toast.error("Please enter your password");
+      setCurrentStep("details");
+    } else if (currentStep === "details") {
+      if (!formState.firstName || !formState.lastName) {
+        toast.error("Please fill in all name fields");
+        return;
+      }
+      if (!validatePassword(formState.password)) {
+        toast.error("Password must be at least 8 characters long");
+        return;
+      }
+      if (formState.password !== formState.confirmPassword) {
+        toast.error("Passwords do not match");
         return;
       }
 
@@ -87,15 +123,13 @@ export default function Login() {
         // Simulate API call
         await new Promise((resolve) => setTimeout(resolve, 1500));
 
-        // Here you would typically make an API call to authenticate the user
-        console.log("Login attempt:", formState);
+        // Here you would typically make an API call to create the user
+        console.log("Registration successful:", formState);
 
-        toast.success("Login successful!");
+        toast.success("Registration successful!");
         router.push("/study");
       } catch (error) {
-        toast.error(
-          "Login failed. Please check your credentials and try again."
-        );
+        toast.error("Registration failed. Please try again.");
       } finally {
         setIsLoading(false);
       }
@@ -105,10 +139,6 @@ export default function Login() {
   const handleGoogleSignIn = () => {
     // Implement Google Sign In
     toast.info("Google Sign In would be implemented here");
-  };
-
-  const handleSeeOtherOptions = () => {
-    toast.info("Other sign-in options would be shown here");
   };
 
   const renderFormFields = () => {
@@ -124,16 +154,44 @@ export default function Login() {
             className=""
           />
         );
-      case "password":
+      case "details":
         return (
-          <Input
-            type="password"
-            placeholder="Enter password"
-            value={formState.password}
-            onChange={(e) => updateFormState("password", e.target.value)}
-            required
-            className=""
-          />
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                placeholder="First name"
+                value={formState.firstName}
+                onChange={(e) => updateFormState("firstName", e.target.value)}
+                required
+                className=""
+              />
+              <Input
+                placeholder="Last name"
+                value={formState.lastName}
+                onChange={(e) => updateFormState("lastName", e.target.value)}
+                required
+                className=""
+              />
+            </div>
+            <Input
+              type="password"
+              placeholder="Create password"
+              value={formState.password}
+              onChange={(e) => updateFormState("password", e.target.value)}
+              required
+              className=""
+            />
+            <Input
+              type="password"
+              placeholder="Confirm password"
+              value={formState.confirmPassword}
+              onChange={(e) =>
+                updateFormState("confirmPassword", e.target.value)
+              }
+              required
+              className=""
+            />
+          </div>
         );
       default:
         return null;
@@ -141,12 +199,19 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen ">
+    <div className="min-h-screen">
       <div className="container mx-auto flex min-h-screen flex-col items-center justify-center px-4">
         <div className="w-full max-w-md space-y-8">
           <div className="flex flex-col items-center">
             <JaemiLogo />
-            <h1 className="mt-6 text-3xl font-bold">Welcome back</h1>
+            <h1 className="mt-6 text-3xl font-bold">
+              Create your free account
+            </h1>
+            <p className="mt-2 text-center text-sm text-gray-400">
+              {currentStep === "email"
+                ? "Create your free account to start learning Korean. No credit card required."
+                : "Just a few more details to get started"}
+            </p>
           </div>
 
           <form onSubmit={handleContinue} className="mt-8 space-y-6">
@@ -154,7 +219,7 @@ export default function Login() {
               <Button
                 type="button"
                 variant="outline"
-                className="w-full"
+                className="w-full  hover:bg-gray-100"
                 onClick={handleGoogleSignIn}
               >
                 <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
@@ -180,23 +245,12 @@ export default function Login() {
             )}
 
             {currentStep === "email" && (
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full"
-                onClick={handleSeeOtherOptions}
-              >
-                See other options
-              </Button>
-            )}
-
-            {currentStep === "email" && (
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
                   <Separator className="w-full" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="px-2 text-gray-400">or</span>
+                  <span className=" px-2 text-gray-400">or</span>
                 </div>
               </div>
             )}
@@ -207,33 +261,54 @@ export default function Login() {
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Logging in...
+                  Creating account...
                 </>
               ) : (
                 "Continue"
               )}
             </Button>
 
-            {currentStep === "password" && (
-              <div className="text-center">
-                <Link
-                  href="/forgot-password"
-                  className="text-sm text-gray-400 "
-                >
-                  Forgot password?
+            {currentStep === "email" && (
+              <p className="text-center text-xs text-gray-400">
+                By continuing, you agree to Jaemi's{" "}
+                <Link href="/terms" className="underline">
+                  Terms of Service
+                </Link>{" "}
+                and{" "}
+                <Link href="/privacy" className="underline">
+                  Privacy Policy
                 </Link>
-              </div>
+                .
+              </p>
             )}
           </form>
 
           <div className="text-center">
             <p className="text-sm text-gray-400">
-              Don't have an account?{" "}
-              <Link href="/register" className="hover:underline">
-                Sign up
+              Already have an account?{" "}
+              <Link href="/login" className="hover:underline">
+                Log in
               </Link>
             </p>
           </div>
+
+          {/* {currentStep === "email" && (
+            <div className="space-y-4">
+              <p className="text-center text-xs text-gray-400">
+                Trusted by teams at
+              </p>
+              <div className="flex flex-wrap justify-center gap-8">
+                {trustedPartners.map((partner) => (
+                  <img
+                    key={partner.name}
+                    src={partner.logo || "/placeholder.svg"}
+                    alt={partner.name}
+                    className="h-8 object-contain opacity-50"
+                  />
+                ))}
+              </div>
+            </div>
+          )} */}
         </div>
       </div>
     </div>

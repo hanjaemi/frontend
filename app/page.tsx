@@ -1,7 +1,7 @@
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
-import NoSidebarLayout from "./no-sidebar-layout"
-import { ArrowRight } from "lucide-react"
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import NoSidebarLayout from "./no-sidebar-layout";
+import { ArrowRight } from "lucide-react";
 
 const JaemiLogo = () => (
   <svg
@@ -19,17 +19,38 @@ const JaemiLogo = () => (
       strokeLinecap="round"
       strokeLinejoin="round"
     />
-    <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <path
+      d="M2 17L12 22L22 17"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M2 12L12 17L22 12"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
   </svg>
-)
+);
 
 const companies = [
-  { name: "Seoul National University", logo: "/placeholder.svg?height=40&width=120" },
-  { name: "Korean Cultural Center", logo: "/placeholder.svg?height=40&width=120" },
-  { name: "King Sejong Institute", logo: "/placeholder.svg?height=40&width=120" },
+  {
+    name: "Seoul National University",
+    logo: "/placeholder.svg?height=40&width=120",
+  },
+  {
+    name: "Korean Cultural Center",
+    logo: "/placeholder.svg?height=40&width=120",
+  },
+  {
+    name: "King Sejong Institute",
+    logo: "/placeholder.svg?height=40&width=120",
+  },
   { name: "TOPIK Organization", logo: "/placeholder.svg?height=40&width=120" },
-]
+];
 
 export default function Home() {
   return (
@@ -60,19 +81,15 @@ export default function Home() {
               <span className="text-primary">재미있게</span>
             </h1>
             <p className="mb-12 text-xl text-muted-foreground">
-              Master Korean through interactive lessons, real-world content, and AI-powered assistance. Join over
-              100,000 learners discovering the joy of Korean language.
+              Master Korean through interactive lessons, real-world content, and
+              AI-powered assistance. Join over 100,000 learners discovering the
+              joy of Korean language.
             </p>
             <div className="flex justify-center gap-4">
-              <Link href="/login">
+              <Link href="/register">
                 <Button size="lg" className="gap-2">
                   Start Learning Free
                   <ArrowRight className="h-4 w-4" />
-                </Button>
-              </Link>
-              <Link href="/pricing">
-                <Button size="lg" variant="outline">
-                  See our plans
                 </Button>
               </Link>
             </div>
@@ -84,7 +101,12 @@ export default function Home() {
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             <div className="rounded-xl border bg-card p-6">
               <div className="mb-4 rounded-lg bg-primary/10 p-3 w-fit">
-                <svg className="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg
+                  className="h-6 w-6 text-primary"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -95,12 +117,18 @@ export default function Home() {
               </div>
               <h3 className="mb-2 text-xl font-bold">Real-world Content</h3>
               <p className="text-muted-foreground">
-                Learn from K-pop songs, YouTube videos, and authentic Korean media
+                Learn from K-pop songs, YouTube videos, and authentic Korean
+                media
               </p>
             </div>
             <div className="rounded-xl border bg-card p-6">
               <div className="mb-4 rounded-lg bg-primary/10 p-3 w-fit">
-                <svg className="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg
+                  className="h-6 w-6 text-primary"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -111,12 +139,18 @@ export default function Home() {
               </div>
               <h3 className="mb-2 text-xl font-bold">AI-Powered Learning</h3>
               <p className="text-muted-foreground">
-                Get instant feedback and personalized assistance from our AI tutor
+                Get instant feedback and personalized assistance from our AI
+                tutor
               </p>
             </div>
             <div className="rounded-xl border bg-card p-6">
               <div className="mb-4 rounded-lg bg-primary/10 p-3 w-fit">
-                <svg className="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg
+                  className="h-6 w-6 text-primary"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -126,14 +160,18 @@ export default function Home() {
                 </svg>
               </div>
               <h3 className="mb-2 text-xl font-bold">Learn at Your Pace</h3>
-              <p className="text-muted-foreground">Flexible learning paths adapted to your schedule and proficiency</p>
+              <p className="text-muted-foreground">
+                Flexible learning paths adapted to your schedule and proficiency
+              </p>
             </div>
           </div>
         </section>
 
         {/* Trust Section */}
         <section className="container mx-auto px-4 py-24 text-center">
-          <p className="mb-8 text-sm text-muted-foreground">Trusted by leading Korean language institutions</p>
+          <p className="mb-8 text-sm text-muted-foreground">
+            Trusted by leading Korean language institutions
+          </p>
           <div className="flex flex-wrap justify-center gap-12 grayscale">
             {companies.map((company) => (
               <img
@@ -149,8 +187,12 @@ export default function Home() {
         {/* CTA Section */}
         <section className="container mx-auto px-4 py-24">
           <div className="rounded-2xl bg-primary/5 p-12 text-center">
-            <h2 className="mb-4 text-3xl font-bold">Ready to start your Korean journey?</h2>
-            <p className="mb-8 text-muted-foreground">Join thousands of learners mastering Korean with Jaemi</p>
+            <h2 className="mb-4 text-3xl font-bold">
+              Ready to start your Korean journey?
+            </h2>
+            <p className="mb-8 text-muted-foreground">
+              Join thousands of learners mastering Korean with Jaemi
+            </p>
             <Link href="/login">
               <Button size="lg" className="gap-2">
                 Get Started Free
@@ -161,6 +203,5 @@ export default function Home() {
         </section>
       </main>
     </NoSidebarLayout>
-  )
+  );
 }
-
