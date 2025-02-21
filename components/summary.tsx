@@ -18,24 +18,6 @@ const summaryData: SummarySection[] = [
     ],
   },
   {
-    id: "1",
-    title: "Key Grammar Points",
-    content: [
-      "Basic sentence structure: Subject + Object + Verb",
-      "Formal vs. Informal speech levels",
-      "Past, Present, and Future tense markers",
-    ],
-  },
-  {
-    id: "1",
-    title: "Key Grammar Points",
-    content: [
-      "Basic sentence structure: Subject + Object + Verb",
-      "Formal vs. Informal speech levels",
-      "Past, Present, and Future tense markers",
-    ],
-  },
-  {
     id: "2",
     title: "Essential Vocabulary",
     content: [
@@ -46,15 +28,6 @@ const summaryData: SummarySection[] = [
   },
   {
     id: "3",
-    title: "Cultural Notes",
-    content: [
-      "Honorific system in Korean language",
-      "Age-based speech levels",
-      "Cultural context for formal vs. informal speech",
-    ],
-  },
-  {
-    id: "4",
     title: "Cultural Notes",
     content: [
       "Honorific system in Korean language",

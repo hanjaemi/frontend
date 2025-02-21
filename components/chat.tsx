@@ -24,9 +24,6 @@ export function Chat({
   selectedWord: string | null;
   onLoadingChange?: (loading: boolean) => void;
 }) {
-  const [messages, setMessages] = useState<Message[]>([
-    { id: "", content: "안녕하세요, 어떻게 도와줗까?", sender: "assistant" },
-  ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -35,26 +32,37 @@ export function Chat({
     return `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   };
 
-  useEffect(() => {
-    // Load messages from local storage when the component mounts
+  const [messages, setMessages] = useState<Message[]>(() => {
+    const storageKey = `chatMessages_${level}`;
     try {
-      const storedMessages = localStorage.getItem("chatMessages");
+      const storedMessages = localStorage.getItem(storageKey);
       if (storedMessages) {
-        setMessages(JSON.parse(storedMessages));
+        return JSON.parse(storedMessages);
       }
     } catch (error) {
-      console.error("Failed to load messages from local storage:", error);
+      console.error(
+        `Failed to load initial messages for ${storageKey}:`,
+        error
+      );
     }
-  }, []);
+    return [
+      {
+        id: generateMessageId(),
+        content: "안녕하세요, 어떻게 도와줗까?",
+        sender: "assistant",
+      },
+    ];
+  });
 
   useEffect(() => {
-    // Save messages to local storage whenever they change
+    const storageKey = `chatMessages_${level}`;
     try {
-      localStorage.setItem("chatMessages", JSON.stringify(messages));
+      console.log(`Saving messages for ${storageKey}:`, messages);
+      localStorage.setItem(storageKey, JSON.stringify(messages));
     } catch (error) {
-      console.error("Failed to save messages to local storage:", error);
+      console.error(`Failed to save messages for ${storageKey}:`, error);
     }
-  }, [messages]);
+  }, [messages, level]);
 
   useEffect(() => {
     if (selectedGrammar) {
