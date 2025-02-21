@@ -32,7 +32,7 @@ export default function LevelPage({ params }: { params: { id: string } }) {
       <Button variant="ghost" onClick={() => router.back()} className="mb-4">
         <ArrowLeft className="mr-2 h-4 w-4" /> Back
       </Button>
-      <h1 className="mb-8 text-3xl font-bold">Level {params.id}</h1>
+      {/* <h1 className="mb-8 text-3xl font-bold">Level {params.id}</h1> */}
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card className="p-4">

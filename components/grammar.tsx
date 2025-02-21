@@ -37,7 +37,7 @@ const grammarRules: GrammarRule[] = [
     description:
       "Express ability to do something. Express ability to do something",
     type: "writing",
-    timestamp: "",
+    timestamp: "1:20",
   },
   {
     id: "2",
@@ -103,7 +103,7 @@ export function Grammar({
 }) {
   return (
     <TooltipProvider>
-      <ScrollArea className={type === "level" ? "h-[600px]" : "h-[400px]"}>
+      <ScrollArea className={type === "level" ? "h-[780px]" : "h-[370px]"}>
         <div className="space-y-4 p-4">
           {grammarRules.map((rule) => {
             const Icon = typeIcons[rule.type];

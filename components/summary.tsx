@@ -18,6 +18,24 @@ const summaryData: SummarySection[] = [
     ],
   },
   {
+    id: "1",
+    title: "Key Grammar Points",
+    content: [
+      "Basic sentence structure: Subject + Object + Verb",
+      "Formal vs. Informal speech levels",
+      "Past, Present, and Future tense markers",
+    ],
+  },
+  {
+    id: "1",
+    title: "Key Grammar Points",
+    content: [
+      "Basic sentence structure: Subject + Object + Verb",
+      "Formal vs. Informal speech levels",
+      "Past, Present, and Future tense markers",
+    ],
+  },
+  {
     id: "2",
     title: "Essential Vocabulary",
     content: [
@@ -48,7 +66,7 @@ const summaryData: SummarySection[] = [
 
 export function Summary({ level }: { level: string }) {
   return (
-    <ScrollArea className="h-[600px] pr-4 mt-4">
+    <ScrollArea className="h-[780px] pr-4 pt-4">
       <div className="space-y-4">
         {summaryData.map((section) => (
           <Card key={section.id}>

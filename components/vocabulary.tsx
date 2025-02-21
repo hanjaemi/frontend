@@ -95,7 +95,7 @@ export function Vocabulary({
 }) {
   return (
     <TooltipProvider>
-      <ScrollArea className={type === "level" ? "h-[600px]" : "h-[400px]"}>
+      <ScrollArea className={type === "level" ? "h-[780px]" : "h-[370px]"}>
         <div className="space-y-4 p-4">
           {vocabularyWords.map((word) => {
             const Icon = typeIcons[word.type];

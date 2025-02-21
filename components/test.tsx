@@ -80,7 +80,7 @@ export function Test({ level }: { level: string }) {
 
   return (
     <div className="pt-4">
-      <ScrollArea className="h-[600px] pr-4 mb-4">
+      <ScrollArea className="h-[720px] pr-4 mb-4">
         <div className="space-y-4">
           {questions.map((question) => (
             <Card key={question.id}>

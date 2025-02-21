@@ -37,27 +37,38 @@ export function Chat({
 
   useEffect(() => {
     // Load messages from local storage when the component mounts
-    const storedMessages = localStorage.getItem("chatMessages");
-    if (storedMessages) {
-      setMessages(JSON.parse(storedMessages));
+    try {
+      const storedMessages = localStorage.getItem("chatMessages");
+      if (storedMessages) {
+        setMessages(JSON.parse(storedMessages));
+      }
+    } catch (error) {
+      console.error("Failed to load messages from local storage:", error);
     }
   }, []);
 
   useEffect(() => {
     // Save messages to local storage whenever they change
-    localStorage.setItem("chatMessages", JSON.stringify(messages));
+    try {
+      localStorage.setItem("chatMessages", JSON.stringify(messages));
+    } catch (error) {
+      console.error("Failed to save messages to local storage:", error);
+    }
   }, [messages]);
 
   useEffect(() => {
     if (selectedGrammar) {
       const newMessage: Message = {
         id: generateMessageId(),
-        content: `Tell me a little bit more about ${selectedGrammar} with 2 real live examples. Make it short as possible. Onyl key moments! Im on level ${level} now!`,
+        content: `Tell me a little bit more about ${selectedGrammar}!`,
         sender: "user",
       };
       setMessages((prev) => [...prev, newMessage]);
 
-      handleSubmit(newMessage.content);
+      handleSubmit(
+        newMessage.content +
+          " with 2 real live examples. Make it short as possible. Onyl key moments! Im on level"
+      );
     }
   }, [selectedGrammar]);
 
@@ -65,11 +76,14 @@ export function Chat({
     if (selectedWord) {
       const newMessage: Message = {
         id: generateMessageId(),
-        content: `Can you explain the usage of "${selectedWord}" and provide some example sentences? Make it short as possible. Onyl key moments!`,
+        content: `Can you explain the usage of "${selectedWord}"`,
         sender: "user",
       };
       setMessages((prev) => [...prev, newMessage]);
-      handleSubmit(newMessage.content);
+      handleSubmit(
+        newMessage.content +
+          "and provide some example sentences? Make it short as possible. Onyl key moments!"
+      );
     }
   }, [selectedWord]);
 
@@ -140,7 +154,7 @@ export function Chat({
   };
 
   return (
-    <div className="flex flex-col h-[800px] border rounded-lg">
+    <div className="flex flex-col h-[780px] border rounded-lg">
       <ScrollArea className="flex-1 p-4">
         <div className="space-y-4">
           {messages.map((message) => (
@@ -156,7 +170,7 @@ export function Chat({
                 }
               >
                 <AvatarFallback>
-                  {message.sender === "assistant" ? "AI" : "You"}
+                  {message.sender === "assistant" ? "AI" : "U"}
                 </AvatarFallback>
               </Avatar>
               <div
