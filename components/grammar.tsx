@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useEffect, useState } from "react";
 import { getStudyData } from "@/services/api";
+import Skeleton from "react-loading-skeleton";
 
 type GrammarType = "writing" | "speaking" | "common";
 
@@ -32,19 +33,48 @@ const typeDescriptions = {
   common: "Common grammar point",
 } as const;
 
+export function GrammarLoading() {
+  return (
+    <div className="space-y-4 p-4">
+      {[1, 2, 3, 4, 5].map((i) => (
+        <div key={i} className="w-full h-[100px] p-3">
+          <div className="flex items-start gap-4">
+            <Skeleton circle width={24} height={24} />
+            <div className="flex-1 space-y-2">
+              <Skeleton width={200} height={20} />
+              <Skeleton width={300} height={16} />
+              <Skeleton width={80} height={12} />
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function Grammar({
   type,
   id,
   onGrammarClick,
   disabled,
   data,
+  isLoading,
 }: {
   type: string;
   id: string;
   onGrammarClick: (grammar: string, timestamp?: string) => void;
   disabled?: boolean;
   data: GrammarRule[];
+  isLoading?: boolean;
 }) {
+  if (isLoading) {
+    return (
+      <ScrollArea className={type === "level" ? "h-[780px]" : "h-[370px]"}>
+        <GrammarLoading />
+      </ScrollArea>
+    );
+  }
+
   return (
     <TooltipProvider>
       <ScrollArea className={type === "level" ? "h-[780px]" : "h-[370px]"}>

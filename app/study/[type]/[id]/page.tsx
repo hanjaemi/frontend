@@ -14,6 +14,7 @@ import { Summary } from "@/components/summary";
 import { Test } from "@/components/test";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+import "react-loading-skeleton/dist/skeleton.css";
 
 export default function StudyPage({
   params,
@@ -150,34 +151,24 @@ export default function StudyPage({
                   <TabsTrigger value="vocabulary">Vocabulary</TabsTrigger>
                 </TabsList>
                 <TabsContent value="grammar" className="flex-1 mt-0">
-                  {isLoading ? (
-                    <div>Loading grammar rules...</div>
-                  ) : error ? (
-                    <div>Error: {error}</div>
-                  ) : (
-                    <Grammar
-                      type={type}
-                      id={id}
-                      onGrammarClick={handleGrammarClick}
-                      disabled={isChatLoading}
-                      data={studyData?.grammar || []}
-                    />
-                  )}
+                  <Grammar
+                    type={type}
+                    id={id}
+                    onGrammarClick={handleGrammarClick}
+                    disabled={isChatLoading}
+                    data={studyData?.grammar || []}
+                    isLoading={isLoading}
+                  />
                 </TabsContent>
                 <TabsContent value="vocabulary" className="flex-1 mt-0">
-                  {isLoading ? (
-                    <div>Loading vocabulary...</div>
-                  ) : error ? (
-                    <div>Error: {error}</div>
-                  ) : (
-                    <Vocabulary
-                      type={type}
-                      id={id}
-                      onWordClick={handleWordClick}
-                      disabled={isChatLoading}
-                      data={studyData?.vocabulary || []}
-                    />
-                  )}
+                  <Vocabulary
+                    type={type}
+                    id={id}
+                    onWordClick={handleWordClick}
+                    disabled={isChatLoading}
+                    data={studyData?.vocabulary || []}
+                    isLoading={isLoading}
+                  />
                 </TabsContent>
               </Tabs>
             </Card>
@@ -204,7 +195,12 @@ export default function StudyPage({
               />
             </TabsContent>
             <TabsContent value="flashcards">
-              <Flashcards level={id} />
+              <Flashcards 
+                level={type} 
+                vocabulary={studyData?.vocabulary}
+                grammar={studyData?.grammar}
+                isLoading={isLoading}
+              />
             </TabsContent>
             <TabsContent value="summary" className="flex-1 mt-0">
               <Summary level={id} />

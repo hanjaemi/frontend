@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useEffect, useState } from "react";
 import { getStudyData } from "@/services/api";
+import Skeleton from "react-loading-skeleton";
 
 type VocabType = "important" | "common" | "new";
 
@@ -32,19 +33,48 @@ const typeDescriptions = {
   new: "Newly introduced vocabulary",
 } as const;
 
+export function VocabularyLoading() {
+  return (
+    <div className="space-y-4 p-4">
+      {[1, 2, 3, 4, 5].map((i) => (
+        <div key={i} className="w-full h-[100px] p-3">
+          <div className="flex items-start gap-4">
+            <Skeleton circle width={40} height={40} />
+            <div className="flex-1 space-y-2">
+              <Skeleton width={120} height={20} />
+              <Skeleton width={200} height={16} />
+              <Skeleton width={80} height={12} />
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function Vocabulary({
   type,
   id,
   onWordClick,
   disabled,
   data,
+  isLoading,
 }: {
   type: string;
   id: string;
   onWordClick: (word: string, timestamp?: string) => void;
   disabled?: boolean;
   data: VocabularyWord[];
+  isLoading?: boolean;
 }) {
+  if (isLoading) {
+    return (
+      <ScrollArea className={type === "level" ? "h-[780px]" : "h-[370px]"}>
+        <VocabularyLoading />
+      </ScrollArea>
+    );
+  }
+
   return (
     <TooltipProvider>
       <ScrollArea className={type === "level" ? "h-[780px]" : "h-[370px]"}>
