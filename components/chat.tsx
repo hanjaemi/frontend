@@ -13,6 +13,10 @@ interface Message {
   sender: "user" | "assistant";
 }
 
+const generateMessageId = () => {
+  return `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+};
+
 export function Chat({
   level,
   selectedGrammar,
@@ -24,20 +28,31 @@ export function Chat({
   selectedWord: string | null;
   onLoadingChange?: (loading: boolean) => void;
 }) {
+  // Ref for the messages end element
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const isInitialMount = useRef(true);
 
-  const generateMessageId = () => {
-    return `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-  };
-
-  const [messages, setMessages] = useState<Message[]>(() => {
+  useEffect(() => {
     const storageKey = `chatMessages_${level}`;
     try {
       const storedMessages = localStorage.getItem(storageKey);
-      if (storedMessages) {
-        return JSON.parse(storedMessages);
+      console.log(`Attempting to load messages for ${storageKey}`);
+      if (storedMessages !== null && storedMessages !== "[]") {
+        const parsedMessages = JSON.parse(storedMessages);
+        setMessages(parsedMessages);
+        console.log("Loaded messages:", parsedMessages);
+      } else {
+        console.log("No stored messages found, setting default message.");
+        setMessages([
+          {
+            id: generateMessageId(),
+            content: "안녕하세요, 어떻게 도와줗까?",
+            sender: "assistant",
+          },
+        ]);
       }
     } catch (error) {
       console.error(
@@ -45,25 +60,31 @@ export function Chat({
         error
       );
     }
-    return [
-      {
-        id: generateMessageId(),
-        content: "안녕하세요, 어떻게 도와줗까?",
-        sender: "assistant",
-      },
-    ];
-  });
+  }, [level]);
 
   useEffect(() => {
-    const storageKey = `chatMessages_${level}`;
-    try {
-      console.log(`Saving messages for ${storageKey}:`, messages);
-      localStorage.setItem(storageKey, JSON.stringify(messages));
-    } catch (error) {
-      console.error(`Failed to save messages for ${storageKey}:`, error);
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+    } else {
+      const storageKey = `chatMessages_${level}`;
+      try {
+        console.log("Current messages before saving:", messages);
+        const storedMessages = localStorage.getItem(storageKey);
+        const parsedStoredMessages = storedMessages
+          ? JSON.parse(storedMessages)
+          : [];
+
+        if (JSON.stringify(parsedStoredMessages) !== JSON.stringify(messages)) {
+          localStorage.setItem(storageKey, JSON.stringify(messages));
+          console.log(`Saved messages for ${storageKey}:`, messages);
+        }
+      } catch (error) {
+        console.error(`Failed to save messages for ${storageKey}:`, error);
+      }
     }
   }, [messages, level]);
 
+  // Handle grammar selection
   useEffect(() => {
     if (selectedGrammar) {
       const newMessage: Message = {
@@ -80,6 +101,7 @@ export function Chat({
     }
   }, [selectedGrammar]);
 
+  // Handle word selection
   useEffect(() => {
     if (selectedWord) {
       const newMessage: Message = {
@@ -95,18 +117,20 @@ export function Chat({
     }
   }, [selectedWord]);
 
+  // Handle loading state
   useEffect(() => {
     onLoadingChange?.(isLoading);
   }, [isLoading, onLoadingChange]);
 
+  // Handle scrolling to the bottom
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
-
   useEffect(() => {
     scrollToBottom();
   }, [messages, isLoading]);
 
+  // Handle message sending
   const handleSubmit = async (message: string) => {
     try {
       setIsLoading(true);
@@ -149,7 +173,6 @@ export function Chat({
       content: input,
       sender: "user" as const,
     };
-
     setMessages((prev) => [...prev, userMessage]);
     const currentInput = input;
     setInput("");

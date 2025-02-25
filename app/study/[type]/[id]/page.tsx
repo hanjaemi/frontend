@@ -27,6 +27,12 @@ export default function StudyPage({
   const [isChatLoading, setIsChatLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("chat");
   const videoRef = useRef<HTMLIFrameElement>(null);
+  const [studyData, setStudyData] = useState<{
+    grammar: any[];
+    vocabulary: any[];
+  } | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (type === "youtube") {
@@ -35,6 +41,29 @@ export default function StudyPage({
       localStorage.setItem("lastSongTitle", decodeURIComponent(id));
     }
   }, [type, id]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(
+          `http://127.0.0.1:8000/api/grammar-and-vocabulary/${id}`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch study data");
+        }
+        const data = await response.json();
+        setStudyData(data);
+      } catch (error) {
+        console.error(error);
+        setError("Failed to load study data");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [id]);
 
   const handleBack = () => {
     if (type === "youtube") {
@@ -104,9 +133,6 @@ export default function StudyPage({
       <Button variant="ghost" onClick={handleBack} className="mb-4">
         <ArrowLeft className="mr-2 h-4 w-4" /> Back to Search
       </Button>
-      {/* <h1 className="mb-8 text-3xl font-bold">
-        {type === "youtube" ? "YouTube Video Study" : "Song Lyrics Study"}
-      </h1> */}
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="space-y-6">
           <Card className="p-4">
@@ -124,20 +150,34 @@ export default function StudyPage({
                   <TabsTrigger value="vocabulary">Vocabulary</TabsTrigger>
                 </TabsList>
                 <TabsContent value="grammar" className="flex-1 mt-0">
-                  <Grammar
-                    type={type}
-                    id={id}
-                    onGrammarClick={handleGrammarClick}
-                    disabled={isChatLoading}
-                  />
+                  {isLoading ? (
+                    <div>Loading grammar rules...</div>
+                  ) : error ? (
+                    <div>Error: {error}</div>
+                  ) : (
+                    <Grammar
+                      type={type}
+                      id={id}
+                      onGrammarClick={handleGrammarClick}
+                      disabled={isChatLoading}
+                      data={studyData?.grammar || []}
+                    />
+                  )}
                 </TabsContent>
                 <TabsContent value="vocabulary" className="flex-1 mt-0">
-                  <Vocabulary
-                    type={type}
-                    id={id}
-                    onWordClick={handleWordClick}
-                    disabled={isChatLoading}
-                  />
+                  {isLoading ? (
+                    <div>Loading vocabulary...</div>
+                  ) : error ? (
+                    <div>Error: {error}</div>
+                  ) : (
+                    <Vocabulary
+                      type={type}
+                      id={id}
+                      onWordClick={handleWordClick}
+                      disabled={isChatLoading}
+                      data={studyData?.vocabulary || []}
+                    />
+                  )}
                 </TabsContent>
               </Tabs>
             </Card>

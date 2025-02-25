@@ -7,6 +7,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useEffect, useState } from "react";
+import { getStudyData } from "@/services/api";
 
 type VocabType = "important" | "common" | "new";
 
@@ -30,74 +32,24 @@ const typeDescriptions = {
   new: "Newly introduced vocabulary",
 } as const;
 
-const vocabularyWords: VocabularyWord[] = [
-  {
-    id: "1",
-    word: "도와주세요",
-    meaning: "Please help me",
-    type: "important",
-    timestamp: "0:05",
-  },
-  {
-    id: "2",
-    word: "저는",
-    meaning: "I am (polite)",
-    type: "common",
-    timestamp: "1:15",
-  },
-  {
-    id: "3",
-    word: "이름이",
-    meaning: "My name is",
-    type: "new",
-    timestamp: "2:30",
-  },
-  {
-    id: "4",
-    word: "국적이",
-    meaning: "I am from (polite)",
-    type: "important",
-    timestamp: "3:45",
-  },
-  {
-    id: "5",
-    word: "연락처",
-    meaning: "Contact information",
-    type: "common",
-    timestamp: "5:00",
-  },
-  {
-    id: "6",
-    word: "도서관",
-    meaning: "Library",
-    type: "new",
-    timestamp: "6:15",
-  },
-  {
-    id: "7",
-    word: "지하철",
-    meaning: "Subway",
-    type: "important",
-    timestamp: "7:30",
-  },
-];
-
 export function Vocabulary({
   type,
   id,
   onWordClick,
   disabled,
+  data,
 }: {
   type: string;
   id: string;
   onWordClick: (word: string, timestamp?: string) => void;
   disabled?: boolean;
+  data: VocabularyWord[];
 }) {
   return (
     <TooltipProvider>
       <ScrollArea className={type === "level" ? "h-[780px]" : "h-[370px]"}>
         <div className="space-y-4 p-4">
-          {vocabularyWords.map((word) => {
+          {data.map((word) => {
             const Icon = typeIcons[word.type];
             return (
               <Button

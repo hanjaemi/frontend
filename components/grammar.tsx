@@ -7,6 +7,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useEffect, useState } from "react";
+import { getStudyData } from "@/services/api";
 
 type GrammarType = "writing" | "speaking" | "common";
 
@@ -30,82 +32,24 @@ const typeDescriptions = {
   common: "Common grammar point",
 } as const;
 
-const grammarRules: GrammarRule[] = [
-  {
-    id: "1",
-    title: "~(이)ㄹ/를 수 있다",
-    description:
-      "Express ability to do something. Express ability to do something",
-    type: "writing",
-    timestamp: "1:20",
-  },
-  {
-    id: "2",
-    title: "~(이)ㄹ/를 수 없다",
-    description: "Express inability to do something",
-    type: "writing",
-    timestamp: "1:30",
-  },
-  {
-    id: "3",
-    title: "~(으)ㄴ/는/은/는/는",
-    description: "Express reason or cause",
-    type: "speaking",
-    timestamp: "2:45",
-  },
-  {
-    id: "4",
-    title: "~(이)ㄹ/를/는/은/는 ",
-    description: "Express passive voice",
-    type: "writing",
-    timestamp: "3:45",
-  },
-  {
-    id: "5",
-    title: "~(으)로/로/로/로",
-    description: "Express manner or means",
-    type: "speaking",
-    timestamp: "4:45",
-  },
-  {
-    id: "6",
-    title: "~(이)ㄹ/를/는/은/는 ",
-    description: "Express condition or hypothesis",
-    type: "writing",
-    timestamp: "5:45",
-  },
-  {
-    id: "7",
-    title: "~(으)ㄴ/는/은/는/는 ",
-    description: "Express conjecture or possibility",
-    type: "speaking",
-    timestamp: "6:45",
-  },
-  {
-    id: "8",
-    title: "~(이)ㄹ/를/는/은/는 ",
-    description: "Express contrast or unexpectedness",
-    type: "writing",
-    timestamp: "7:45",
-  },
-];
-
 export function Grammar({
   type,
   id,
   onGrammarClick,
   disabled,
+  data,
 }: {
   type: string;
   id: string;
   onGrammarClick: (grammar: string, timestamp?: string) => void;
   disabled?: boolean;
+  data: GrammarRule[];
 }) {
   return (
     <TooltipProvider>
       <ScrollArea className={type === "level" ? "h-[780px]" : "h-[370px]"}>
         <div className="space-y-4 p-4">
-          {grammarRules.map((rule) => {
+          {data.map((rule) => {
             const Icon = typeIcons[rule.type];
             return (
               <Button
