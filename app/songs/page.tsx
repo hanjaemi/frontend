@@ -32,6 +32,25 @@ export default function SongAnalysis() {
     }
   };
 
+  const getSongDataFromDatabase = async () => {
+    try {
+      const response = await fetch(`http://192.168.0.124:8080/flashcards`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch song data");
+      }
+      const data = await response.clone().json();
+      console.log(data);
+      return data;
+    } catch (error) {
+      console.error("Error fetching song data:", error);
+      throw error;
+    }
+  };
+
+  useEffect(() => {
+    getSongDataFromDatabase();
+  }, []);
+
   return (
     <div className="container mx-auto px-4 h-screen flex flex-col items-center justify-center">
       <div className="max-w-2xl mx-auto">
