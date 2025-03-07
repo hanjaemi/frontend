@@ -126,45 +126,46 @@ export default function StudyPage({
   };
 
   return (
-    <div className="container mx-auto p-6 flex flex-col h-[calc(100vh-8rem)]">
-      <Button variant="ghost" onClick={handleBack} className="mb-4">
+    <div className="container mx-auto p-6 flex flex-col h-[calc(100vh-2rem)]">
+      <Button variant="ghost" onClick={handleBack} className="mb-4 w-fit">
         <ArrowLeft className="mr-2 h-4 w-4" /> Back to Search
       </Button>
       <div className="grid gap-6 lg:grid-cols-2 flex-1 overflow-hidden">
         <div className="space-y-6 max-h-full overflow-hidden flex flex-col">
-          <Card className="p-4">
+          <Card className="p-3">
             <YoutubeVideo videoId={id} ref={videoRef} />
           </Card>
-          {type === "youtube" && (
-            <Card className="flex flex-col">
-              <Tabs className="flex flex-col flex-1" defaultValue="grammar">
-                <TabsList className="w-full">
-                  <TabsTrigger value="grammar">Grammar</TabsTrigger>
-                  <TabsTrigger value="vocabulary">Vocabulary</TabsTrigger>
-                </TabsList>
-                <TabsContent value="grammar" className="flex-1 mt-0">
-                  <Grammar
-                    type={type}
-                    id={id}
-                    onGrammarClick={handleGrammarClick}
-                    disabled={isChatLoading}
-                    data={studyData?.grammar || []}
-                    isLoading={isLoading}
-                  />
-                </TabsContent>
-                <TabsContent value="vocabulary" className="flex-1 mt-0">
-                  <Vocabulary
-                    type={type}
-                    id={id}
-                    onWordClick={handleWordClick}
-                    disabled={isChatLoading}
-                    data={studyData?.vocabulary || []}
-                    isLoading={isLoading}
-                  />
-                </TabsContent>
-              </Tabs>
-            </Card>
-          )}
+          <Card className="flex flex-col p-3">
+            <Tabs className="flex flex-col flex-1" defaultValue="grammar">
+              <TabsList className="w-full">
+                <TabsTrigger value="grammar">Grammar</TabsTrigger>
+                <TabsTrigger value="vocabulary">Vocabulary</TabsTrigger>
+              </TabsList>
+              <TabsContent value="grammar" className="flex-1 overflow-auto">
+                <Grammar
+                  type={type}
+                  id={id}
+                  onGrammarClick={handleGrammarClick}
+                  disabled={isChatLoading}
+                  data={studyData?.grammar || []}
+                  isLoading={isLoading}
+                />
+              </TabsContent>
+              <TabsContent
+                value="vocabulary"
+                className="flex-1 overflow-auto h-0 p-0 mt-0"
+              >
+                <Vocabulary
+                  type={type}
+                  id={id}
+                  onWordClick={handleWordClick}
+                  disabled={isChatLoading}
+                  data={studyData?.vocabulary || []}
+                  isLoading={isLoading}
+                />
+              </TabsContent>
+            </Tabs>
+          </Card>
         </div>
         <Card className="p-3 flex flex-col overflow-hidden h-full max-h-full">
           <Tabs
@@ -186,7 +187,10 @@ export default function StudyPage({
                 onLoadingChange={setIsChatLoading}
               />
             </TabsContent>
-            <TabsContent value="flashcards" className="flex-1 overflow-auto h-0">
+            <TabsContent
+              value="flashcards"
+              className="flex-1 overflow-auto h-0"
+            >
               <Flashcards
                 level={type}
                 vocabulary={studyData?.vocabulary}

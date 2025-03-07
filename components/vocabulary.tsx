@@ -79,7 +79,7 @@ export function Vocabulary({
   return (
     <TooltipProvider>
       <ScrollArea className={type === "level" ? "h-[780px]" : "h-[370px]"}>
-        <div className="space-y-4 p-4">
+        <div className="space-y-4 py-3 px-4">
           {data.map((word) => {
             const iconType =
               word.type && typeIcons[word.type] ? word.type : "default";
@@ -103,7 +103,7 @@ export function Vocabulary({
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>
-                        {typeDescriptions[word.type] ||
+                        {word.type && typeDescriptions[word.type] ||
                           typeDescriptions.default}
                       </p>
                     </TooltipContent>

@@ -79,7 +79,7 @@ export function Grammar({
   return (
     <TooltipProvider>
       <ScrollArea className={type === "level" ? "h-[780px]" : "h-[370px]"}>
-        <div className="space-y-4 p-4">
+        <div className="space-y-4 py-3 px-4">
           {data.map((rule) => {
             const iconType =
               rule.type && typeIcons[rule.type] ? rule.type : "default";
@@ -102,7 +102,7 @@ export function Grammar({
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>
-                        {typeDescriptions[rule.type] ||
+                        {rule.type && typeDescriptions[rule.type] ||
                           typeDescriptions.default}
                       </p>
                     </TooltipContent>
