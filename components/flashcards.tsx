@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ChevronLeft, ChevronRight, Repeat } from "lucide-react";
@@ -92,6 +92,38 @@ export function Flashcards({
     setIsFlipped(false);
   };
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Handle left arrow key - previous card
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        setCurrentCard((prev) =>
+          (prev - 1 + flashcards.length) % flashcards.length
+        );
+        setIsFlipped(false);
+      }
+      // Handle right arrow key - next card
+      else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        setCurrentCard((prev) => (prev + 1) % flashcards.length);
+        setIsFlipped(false);
+      }
+      // Handle Enter key - flip card
+      else if (e.key === "Enter") {
+        e.preventDefault();
+        setIsFlipped((prev) => !prev);
+      }
+    };
+
+    // Add event listener
+    window.addEventListener("keydown", handleKeyDown);
+
+    // Clean up event listener
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [flashcards]);
+
   if (flashcards.length === 0) {
     return (
       <div className="flex h-full flex-col items-center justify-center">
@@ -107,7 +139,7 @@ export function Flashcards({
   const currentType = flashcards[currentCard].type;
 
   return (
-    <div className="flex h-full flex-col items-center justify-center gap-4">
+    <div className="flex h-full flex-col items-center justify-center gap-2">
       <Tabs
         defaultValue="all"
         value={activeTab}
@@ -116,7 +148,7 @@ export function Flashcards({
           setCurrentCard(0);
           setIsFlipped(false);
         }}
-        className="max-w-[400px]"
+        className="w-[90%] max-w-[400px] mb-1"
       >
         <TabsList className="grid grid-cols-3">
           <TabsTrigger value="all">All</TabsTrigger>
@@ -125,63 +157,82 @@ export function Flashcards({
         </TabsList>
       </Tabs>
 
-      <div className="text-sm text-muted-foreground flex flex-col items-center">
-        <div>
-          Card {currentCard + 1} of {flashcards.length}
-        </div>
+      <div className="text-sm text-muted-foreground mb-1">
+        Card {currentCard + 1} of {flashcards.length}
       </div>
 
-      <div className="perspective-1000 flex-grow flex items-center justify-center">
+      {/* Keyboard controls hint */}
+      <div className="text-xs text-muted-foreground mb-2 flex items-center justify-center gap-3">
+        <span className="flex items-center">
+          <kbd className="px-1 py-0.5 text-xs border rounded-sm mr-1 dark:border-gray-700">←</kbd>
+          <span>Prev</span>
+        </span>
+        <span className="flex items-center">
+          <kbd className="px-1 py-0.5 text-xs border rounded-sm mr-1 dark:border-gray-700">→</kbd>
+          <span>Next</span>
+        </span>
+        <span className="flex items-center">
+          <kbd className="px-1 py-0.5 text-xs border rounded-sm mr-1 dark:border-gray-700">Enter</kbd>
+          <span>Flip</span>
+        </span>
+      </div>
+
+      <div className="perspective-1000 w-[90%] max-w-[400px] mb-2">
         <Card
-          className="w-[90%] max-w-[400px] h-[250px] cursor-pointer transition-transform duration-500"
-          style={{
-            transformStyle: "preserve-3d",
-            transform: isFlipped ? "rotateY(180deg)" : "",
-          }}
+          className={`w-full h-[260px] cursor-pointer card-flip border-2 ${
+            isFlipped ? "flipped" : ""
+          } dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 shadow-md dark:bg-card`}
           onClick={() => setIsFlipped(!isFlipped)}
         >
-          <div className="absolute w-full h-full backface-hidden">
-            <CardContent className="flex items-center justify-center h-full p-4 text-xl">
-              {flashcards[currentCard].front}
+          <div className="card-face">
+            <CardContent className="flex items-center justify-center h-full p-4 text-center">
+              {currentType === "vocabulary" ? (
+                <span className="korean-character text-primary dark:text-primary">
+                  {flashcards[currentCard].front}
+                </span>
+              ) : (
+                <span className="text-2xl font-medium text-primary dark:text-primary">
+                  {flashcards[currentCard].front}
+                </span>
+              )}
             </CardContent>
           </div>
-          <div
-            className="absolute w-full h-full backface-hidden"
-            style={{ transform: "rotateY(180deg)" }}
-          >
-            <CardContent className="flex items-center justify-center h-full p-4 text-xl">
-              {flashcards[currentCard].back}
+          <div className="card-face card-back">
+            <CardContent className="flex items-center justify-center h-full p-4 text-center">
+              <span className="text-xl text-primary dark:text-primary">
+                {flashcards[currentCard].back}
+              </span>
             </CardContent>
           </div>
         </Card>
       </div>
 
-      <div className="flex gap-4 pb-2">
+      <div className="flex gap-6 mt-1">
         <Button
           variant="outline"
           size="icon"
-          className="h-8 w-8"
+          className="h-10 w-10 dark:border-gray-600 dark:hover:border-gray-500"
           onClick={previousCard}
           disabled={flashcards.length <= 1}
         >
-          <ChevronLeft className="h-4 w-4" />
+          <ChevronLeft className="h-5 w-5" />
         </Button>
         <Button
           variant="outline"
           size="icon"
-          className="h-8 w-8"
+          className="h-10 w-10 dark:border-gray-600 dark:hover:border-gray-500"
           onClick={() => setIsFlipped(!isFlipped)}
         >
-          <Repeat className="h-4 w-4" />
+          <Repeat className="h-5 w-5" />
         </Button>
         <Button
           variant="outline"
           size="icon"
-          className="h-8 w-8"
+          className="h-10 w-10 dark:border-gray-600 dark:hover:border-gray-500"
           onClick={nextCard}
           disabled={flashcards.length <= 1}
         >
-          <ChevronRight className="h-4 w-4" />
+          <ChevronRight className="h-5 w-5" />
         </Button>
       </div>
     </div>
