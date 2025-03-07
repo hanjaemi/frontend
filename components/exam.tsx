@@ -79,8 +79,8 @@ export function Test({ level }: { level: string }) {
   };
 
   return (
-    <div className="h-full flex flex-col pt-2">
-      <ScrollArea className="flex-1 pr-4 mb-2">
+    <div className="h-full flex flex-col max-h-full overflow-hidden">
+      <ScrollArea className="flex-1 pr-4 overflow-auto">
         <div className="space-y-4">
           {questions.map((question) => (
             <Card key={question.id}>

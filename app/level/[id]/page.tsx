@@ -9,7 +9,7 @@ import { Vocabulary } from "@/components/vocabulary";
 import { Chat } from "@/components/chat";
 import { Flashcards } from "@/components/flashcards";
 import { Summary } from "@/components/summary";
-import { Test } from "@/components/test";
+import { Test } from "@/components/exam";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { mockLevels } from "@/data/mockLessons";

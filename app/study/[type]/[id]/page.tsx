@@ -10,7 +10,7 @@ import { Vocabulary } from "@/components/vocabulary";
 import { Chat } from "@/components/chat";
 import { Flashcards } from "@/components/flashcards";
 import { Summary } from "@/components/summary";
-import { Test } from "@/components/test";
+import { Test } from "@/components/exam";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -126,18 +126,14 @@ export default function StudyPage({
   };
 
   return (
-    <div className="container mx-auto p-6">
+    <div className="container mx-auto p-6 flex flex-col h-[calc(100vh-8rem)]">
       <Button variant="ghost" onClick={handleBack} className="mb-4">
         <ArrowLeft className="mr-2 h-4 w-4" /> Back to Search
       </Button>
-      <div className="grid gap-6 lg:grid-cols-2">
-        <div className="space-y-6">
+      <div className="grid gap-6 lg:grid-cols-2 flex-1 overflow-hidden">
+        <div className="space-y-6 max-h-full overflow-hidden flex flex-col">
           <Card className="p-4">
-            {type === "youtube" ? (
-              <YoutubeVideo videoId={id} ref={videoRef} />
-            ) : (
-              <SongLyrics songTitle={decodeURIComponent(id)} />
-            )}
+            <YoutubeVideo videoId={id} ref={videoRef} />
           </Card>
           {type === "youtube" && (
             <Card className="flex flex-col">
@@ -170,11 +166,11 @@ export default function StudyPage({
             </Card>
           )}
         </div>
-        <Card className="p-4">
+        <Card className="p-3 flex flex-col overflow-hidden h-full max-h-full">
           <Tabs
             value={activeTab}
             onValueChange={setActiveTab}
-            className="h-full flex flex-col"
+            className="flex flex-col h-full"
           >
             <TabsList className="w-full">
               <TabsTrigger value="chat">Chat</TabsTrigger>
@@ -182,7 +178,7 @@ export default function StudyPage({
               <TabsTrigger value="summary">Summary</TabsTrigger>
               <TabsTrigger value="test">Test</TabsTrigger>
             </TabsList>
-            <TabsContent value="chat" className="flex-1">
+            <TabsContent value="chat" className="flex-1 overflow-auto h-0">
               <Chat
                 level={id}
                 selectedGrammar={selectedGrammar}
@@ -190,7 +186,7 @@ export default function StudyPage({
                 onLoadingChange={setIsChatLoading}
               />
             </TabsContent>
-            <TabsContent value="flashcards">
+            <TabsContent value="flashcards" className="flex-1 overflow-auto h-0">
               <Flashcards
                 level={type}
                 vocabulary={studyData?.vocabulary}
@@ -198,10 +194,10 @@ export default function StudyPage({
                 isLoading={isLoading}
               />
             </TabsContent>
-            <TabsContent value="summary" className="flex-1 mt-0">
+            <TabsContent value="summary" className="flex-1 overflow-auto h-0">
               <Summary level={id} />
             </TabsContent>
-            <TabsContent value="test" className="flex-1 mt-0">
+            <TabsContent value="test" className="flex-1 overflow-auto h-0">
               <Test level={id} />
             </TabsContent>
           </Tabs>

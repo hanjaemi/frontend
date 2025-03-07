@@ -51,10 +51,6 @@ export function Flashcards({
     "all"
   );
 
-  if (isLoading) {
-    return <FlashcardsLoading />;
-  }
-
   const vocabularyCards: Flashcard[] =
     vocabulary?.map((item) => ({
       id: item.id,
@@ -123,6 +119,10 @@ export function Flashcards({
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [flashcards]);
+
+  if (isLoading) {
+    return <FlashcardsLoading />;
+  }
 
   if (flashcards.length === 0) {
     return (
