@@ -79,15 +79,15 @@ export function Test({ level }: { level: string }) {
   };
 
   return (
-    <div className="pt-4">
-      <ScrollArea className="h-[720px] pr-4 mb-4">
+    <div className="h-full flex flex-col pt-2">
+      <ScrollArea className="flex-1 pr-4 mb-2">
         <div className="space-y-4">
           {questions.map((question) => (
             <Card key={question.id}>
-              <CardHeader>
+              <CardHeader className="py-3">
                 <CardTitle className="text-base">{question.question}</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="py-2">
                 <RadioGroup
                   onValueChange={(value) =>
                     setAnswers((prev) => ({
@@ -111,7 +111,7 @@ export function Test({ level }: { level: string }) {
                   ))}
                 </RadioGroup>
                 {showResults && (
-                  <div className="mt-4 text-sm">
+                  <div className="mt-2 text-sm">
                     {answers[question.id] === question.correctAnswer ? (
                       <p className="text-green-500">Correct!</p>
                     ) : (
@@ -127,7 +127,7 @@ export function Test({ level }: { level: string }) {
           ))}
           {showResults && (
             <Card>
-              <CardContent className="p-6">
+              <CardContent className="p-4">
                 <p className="text-lg font-semibold">
                   Your Score: {getScore()} out of {questions.length}
                 </p>
@@ -138,7 +138,7 @@ export function Test({ level }: { level: string }) {
       </ScrollArea>
       {!showResults && (
         <Button
-          className="w-full"
+          className="w-full h-9"
           onClick={handleSubmit}
           disabled={Object.keys(answers).length !== questions.length}
         >

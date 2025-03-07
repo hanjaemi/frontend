@@ -55,13 +55,14 @@ export default function LevelPage({ params }: { params: { id: string } }) {
   // }, [fetchStudyData]);
 
   return (
-    <div className="container mx-auto p-6">
-      <Button variant="ghost" onClick={() => router.back()} className="mb-4">
-        <ArrowLeft className="mr-2 h-4 w-4" /> Back
-      </Button>
-      {/* <h1 className="mb-8 text-3xl font-bold">Level {params.id}</h1> */}
+    <div className="flex flex-col h-[calc(100vh-1rem)] max-h-screen py-3 px-4">
+      <div className="flex items-center mb-2">
+        <Button variant="ghost" onClick={() => router.back()} className="h-8 px-2">
+          <ArrowLeft className="mr-1 h-4 w-4" /> Back
+        </Button>
+      </div>
 
-      <div className="mb-6">
+      <div className="mb-3">
         <Tabs
           defaultValue={studyData?.lessons?.[0]?.id}
           onValueChange={setSelectedLesson}
@@ -76,14 +77,14 @@ export default function LevelPage({ params }: { params: { id: string } }) {
         </Tabs>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card className="p-4">
-          <Tabs defaultValue="grammar">
+      <div className="grid gap-4 flex-1 overflow-hidden lg:grid-cols-2">
+        <Card className="p-3 flex flex-col overflow-hidden">
+          <Tabs defaultValue="grammar" className="flex flex-col h-full">
             <TabsList className="w-full">
               <TabsTrigger value="grammar">Grammar</TabsTrigger>
               <TabsTrigger value="vocabulary">Vocabulary</TabsTrigger>
             </TabsList>
-            <TabsContent value="grammar">
+            <TabsContent value="grammar" className="flex-1 overflow-auto">
               <Grammar
                 type="level"
                 id={params.id}
@@ -93,7 +94,7 @@ export default function LevelPage({ params }: { params: { id: string } }) {
                 isLoading={isLoading}
               />
             </TabsContent>
-            <TabsContent value="vocabulary">
+            <TabsContent value="vocabulary" className="flex-1 overflow-auto">
               <Vocabulary
                 type="level"
                 id={params.id}
@@ -105,28 +106,28 @@ export default function LevelPage({ params }: { params: { id: string } }) {
             </TabsContent>
           </Tabs>
         </Card>
-        <Card className="p-4">
-          <Tabs defaultValue="chat">
+        <Card className="p-3 flex flex-col overflow-hidden">
+          <Tabs defaultValue="chat" className="flex flex-col h-full">
             <TabsList className="w-full">
               <TabsTrigger value="chat">Chat</TabsTrigger>
               <TabsTrigger value="flashcards">Flashcards</TabsTrigger>
               <TabsTrigger value="summary">Summary</TabsTrigger>
               <TabsTrigger value="test">Test</TabsTrigger>
             </TabsList>
-            <TabsContent value="chat">
+            <TabsContent value="chat" className="flex-1 overflow-auto">
               <Chat
                 level={params.id}
                 selectedGrammar={selectedGrammar}
                 selectedWord={selectedWord}
               />
             </TabsContent>
-            <TabsContent value="flashcards">
+            <TabsContent value="flashcards" className="flex-1 overflow-auto">
               <Flashcards level={params.id} />
             </TabsContent>
-            <TabsContent value="summary">
+            <TabsContent value="summary" className="flex-1 overflow-auto">
               <Summary level={params.id} />
             </TabsContent>
-            <TabsContent value="test">
+            <TabsContent value="test" className="flex-1 overflow-auto">
               <Test level={params.id} />
             </TabsContent>
           </Tabs>

@@ -185,7 +185,7 @@ export function Chat({
   };
 
   return (
-    <div className="flex flex-col h-[780px] border rounded-lg">
+    <div className="flex flex-col h-full border rounded-lg">
       <ScrollArea className="flex-1 p-4">
         <div className="space-y-4">
           {messages.map((message) => (
@@ -234,15 +234,16 @@ export function Chat({
           <div ref={messagesEndRef} />
         </div>
       </ScrollArea>
-      <div className="flex gap-2 border-t p-4">
+      <div className="flex gap-2 border-t p-2">
         <Input
           placeholder="Type your message..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && !isLoading && sendMessage()}
           disabled={isLoading}
+          className="h-9"
         />
-        <Button onClick={sendMessage} disabled={isLoading}>
+        <Button onClick={sendMessage} disabled={isLoading} className="h-9 px-3">
           Send
         </Button>
       </div>
