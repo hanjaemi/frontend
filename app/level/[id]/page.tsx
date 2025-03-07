@@ -12,6 +12,7 @@ import { Summary } from "@/components/summary";
 import { Test } from "@/components/test";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+import { mockLevels } from "@/data/mockLessons";
 
 export default function LevelPage({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -38,26 +39,30 @@ export default function LevelPage({ params }: { params: { id: string } }) {
     setSelectedWord(word);
   }, []);
 
-  // const fetchStudyData = useCallback(async () => {
-  //   try {
-  //     const response = await fetch(`/api/level/${params.id}`);
-  //     const data = await response.json();
-  //     setStudyData(data);
-  //   } catch (error) {
-  //     console.error("Error fetching study data:", error);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // }, [params.id]);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const levelData = mockLevels[params.id as keyof typeof mockLevels];
+      console.log(levelData);
+      if (levelData) {
+        setStudyData(levelData);
+        setSelectedLesson(levelData.lessons[0].id);
+      } else {
+        console.error(`No data found for level ${params.id}`);
+      }
+      setIsLoading(false);
+    }, 500);
 
-  // useEffect(() => {
-  //   fetchStudyData();
-  // }, [fetchStudyData]);
+    return () => clearTimeout(timer);
+  }, [params.id]);
 
   return (
     <div className="flex flex-col h-[calc(100vh-1rem)] max-h-screen py-3 px-4">
       <div className="flex items-center mb-2">
-        <Button variant="ghost" onClick={() => router.back()} className="h-8 px-2">
+        <Button
+          variant="ghost"
+          onClick={() => router.back()}
+          className="h-8 px-2"
+        >
           <ArrowLeft className="mr-1 h-4 w-4" /> Back
         </Button>
       </div>
@@ -65,6 +70,7 @@ export default function LevelPage({ params }: { params: { id: string } }) {
       <div className="mb-3">
         <Tabs
           defaultValue={studyData?.lessons?.[0]?.id}
+          value={selectedLesson || ""}
           onValueChange={setSelectedLesson}
         >
           <TabsList className="w-full">
@@ -119,10 +125,16 @@ export default function LevelPage({ params }: { params: { id: string } }) {
                 level={params.id}
                 selectedGrammar={selectedGrammar}
                 selectedWord={selectedWord}
+                onLoadingChange={setIsChatLoading}
               />
             </TabsContent>
             <TabsContent value="flashcards" className="flex-1 overflow-auto">
-              <Flashcards level={params.id} />
+              <Flashcards
+                level={params.id}
+                vocabulary={currentLesson?.vocabulary}
+                grammar={currentLesson?.grammar}
+                isLoading={isLoading}
+              />
             </TabsContent>
             <TabsContent value="summary" className="flex-1 overflow-auto">
               <Summary level={params.id} />

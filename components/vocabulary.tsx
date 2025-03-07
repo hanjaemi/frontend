@@ -8,7 +8,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useEffect, useState } from "react";
-import { getStudyData } from "@/services/api";
 import Skeleton from "react-loading-skeleton";
 
 type VocabType = "important" | "common" | "new";
@@ -17,20 +16,22 @@ type VocabularyWord = {
   id: string;
   word: string;
   meaning: string;
-  type: VocabType;
-  timestamp: string;
+  type?: VocabType;
+  timestamp?: string;
 };
 
 const typeIcons = {
   important: Star,
   common: CircleDot,
   new: Sparkles,
+  default: CircleDot,
 } as const;
 
 const typeDescriptions = {
   important: "Important vocabulary",
   common: "Common vocabulary",
   new: "Newly introduced vocabulary",
+  default: "Vocabulary item",
 } as const;
 
 export function VocabularyLoading() {
@@ -80,7 +81,9 @@ export function Vocabulary({
       <ScrollArea className={type === "level" ? "h-[780px]" : "h-[370px]"}>
         <div className="space-y-4 p-4">
           {data.map((word) => {
-            const Icon = typeIcons[word.type];
+            const iconType =
+              word.type && typeIcons[word.type] ? word.type : "default";
+            const Icon = typeIcons[iconType];
             return (
               <Button
                 key={word.id}
@@ -99,7 +102,10 @@ export function Vocabulary({
                       </div>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>{typeDescriptions[word.type]}</p>
+                      <p>
+                        {typeDescriptions[word.type] ||
+                          typeDescriptions.default}
+                      </p>
                     </TooltipContent>
                   </Tooltip>
                   <div className="flex-1 space-y-1">

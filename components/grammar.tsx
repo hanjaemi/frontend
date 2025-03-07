@@ -8,7 +8,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useEffect, useState } from "react";
-import { getStudyData } from "@/services/api";
 import Skeleton from "react-loading-skeleton";
 
 type GrammarType = "writing" | "speaking" | "common";
@@ -17,7 +16,7 @@ type GrammarRule = {
   id: string;
   title: string;
   description: string;
-  type: GrammarType;
+  type?: GrammarType;
   timestamp?: string;
 };
 
@@ -25,12 +24,14 @@ const typeIcons = {
   writing: PenLine,
   speaking: MessageCircle,
   common: BookOpen,
+  default: BookOpen,
 } as const;
 
 const typeDescriptions = {
   writing: "Writing exercise",
   speaking: "Speaking practice",
   common: "Common grammar point",
+  default: "Grammar point",
 } as const;
 
 export function GrammarLoading() {
@@ -80,7 +81,9 @@ export function Grammar({
       <ScrollArea className={type === "level" ? "h-[780px]" : "h-[370px]"}>
         <div className="space-y-4 p-4">
           {data.map((rule) => {
-            const Icon = typeIcons[rule.type];
+            const iconType =
+              rule.type && typeIcons[rule.type] ? rule.type : "default";
+            const Icon = typeIcons[iconType];
             return (
               <Button
                 key={rule.id}
@@ -90,12 +93,18 @@ export function Grammar({
                 disabled={disabled}
               >
                 <div className="flex items-start gap-4 w-full">
+                  {/* Wrap the Icon in a div instead of directly in TooltipTrigger to avoid SlotClone issues */}
                   <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Icon className="h-5 w-5 mt-0.5 flex-shrink-0" />
+                    <TooltipTrigger>
+                      <div>
+                        <Icon className="h-5 w-5 mt-0.5 flex-shrink-0" />
+                      </div>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>{typeDescriptions[rule.type]}</p>
+                      <p>
+                        {typeDescriptions[rule.type] ||
+                          typeDescriptions.default}
+                      </p>
                     </TooltipContent>
                   </Tooltip>
                   <div className="flex-1 space-y-1 min-w-0">
