@@ -38,8 +38,6 @@ export default function StudyPage({
   useEffect(() => {
     if (type === "youtube") {
       localStorage.setItem("lastYouTubeVideoId", id);
-    } else if (type === "song") {
-      localStorage.setItem("lastSongTitle", decodeURIComponent(id));
     }
   }, [type, id]);
 
@@ -70,9 +68,8 @@ export default function StudyPage({
     if (type === "youtube") {
       localStorage.removeItem("lastYouTubeVideoId");
       router.push("/youtube");
-    } else if (type === "song") {
-      localStorage.removeItem("lastSongTitle");
-      router.push("/songs");
+    } else {
+      router.push("/study");
     }
   };
 

@@ -30,11 +30,6 @@ const sidebarItems = [
     icon: Youtube,
     href: "/youtube",
   },
-  {
-    title: "Song",
-    icon: Music,
-    href: "/songs",
-  },
 ];
 
 const JaemiLogo = () => (
