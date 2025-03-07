@@ -5,7 +5,6 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { YoutubeVideo } from "@/components/youtube-video";
-import { SongLyrics } from "@/components/song-lyrics";
 import { Grammar } from "@/components/grammar";
 import { Vocabulary } from "@/components/vocabulary";
 import { Chat } from "@/components/chat";
@@ -192,8 +191,8 @@ export default function StudyPage({
               />
             </TabsContent>
             <TabsContent value="flashcards">
-              <Flashcards 
-                level={type} 
+              <Flashcards
+                level={type}
                 vocabulary={studyData?.vocabulary}
                 grammar={studyData?.grammar}
                 isLoading={isLoading}

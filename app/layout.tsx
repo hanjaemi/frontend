@@ -2,52 +2,31 @@
 
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { Sidebar } from "@/components/sidebar";
 import { useState, useEffect, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({ children }: { children: ReactNode }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const pathname = usePathname();
-
-  useEffect(() => {
-    const checkIsMobile = () => {
-      setIsMobile(window.innerWidth < 768); // Adjust breakpoint as needed
-    };
-
-    checkIsMobile();
-    window.addEventListener("resize", checkIsMobile);
-
-    return () => window.removeEventListener("resize", checkIsMobile);
-  }, []);
-
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
-
   const showSidebar = !["/", "/login", "/register"].includes(pathname);
 
   return (
     <html lang="en">
       <body className={inter.className}>
         <div className="flex min-h-screen">
-          {showSidebar && (
-            <Sidebar
-              open={sidebarOpen}
-              isMobile={isMobile}
-              onToggle={toggleSidebar}
-            />
+          {showSidebar ? (
+            <SidebarProvider>
+              <AppSidebar />
+              <main className="flex-1">{children}</main>
+            </SidebarProvider>
+          ) : (
+            <div className="flex-1">
+              <main>{children}</main>
+            </div>
           )}
-          <div
-            className={`flex-1 transition-all duration-300 ${
-              showSidebar && sidebarOpen && !isMobile ? "ml-0" : "ml-0"
-            }`}
-          >
-            <main className="">{children}</main>
-          </div>
         </div>
       </body>
     </html>
