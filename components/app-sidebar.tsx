@@ -205,7 +205,7 @@ export function AppSidebar() {
           {open && (
             <SidebarGroup className="pt-3">
               <SidebarGroupLabel className="text-xs font-normal text-muted-foreground">
-                Platform
+                History
               </SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
@@ -293,53 +293,55 @@ export function AppSidebar() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <div className="py-3 flex justify-center cursor-pointer">
-                  <Avatar className="h-10 w-10">
-                    <AvatarImage
-                      src="https://github.com/shadcn.png"
-                      alt="user"
-                    />
-                    <AvatarFallback className="bg-primary text-primary-foreground">
-                      SC
-                    </AvatarFallback>
-                  </Avatar>
-                </div>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                align="end"
-                side="right"
-                className="w-56 ml-1"
-                sideOffset={0}
-              >
-                <DropdownMenuItem className="flex gap-2 items-center">
-                  <ArrowUpCircle className="h-4 w-4" />
-                  <span>Upgrade to Pro</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="flex gap-2 items-center">
-                  <User className="h-4 w-4" />
-                  <span>Account</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem className="flex gap-2 items-center">
-                  <CreditCard className="h-4 w-4" />
-                  <span>Billing</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem className="flex gap-2 items-center">
-                  <Bell className="h-4 w-4" />
-                  <span>Notifications</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={handleSignOut}
-                  className="flex gap-2 items-center"
+            <div className="flex flex-col">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <div className="py-3 flex justify-center cursor-pointer">
+                    <Avatar className="h-10 w-10">
+                      <AvatarImage
+                        src="https://github.com/shadcn.png"
+                        alt="user"
+                      />
+                      <AvatarFallback className="bg-primary text-primary-foreground">
+                        SC
+                      </AvatarFallback>
+                    </Avatar>
+                  </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  side="right"
+                  className="w-56 ml-1"
+                  sideOffset={0}
                 >
-                  <LogOut className="h-4 w-4" />
-                  <span>Log out</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                  <DropdownMenuItem className="flex gap-2 items-center">
+                    <ArrowUpCircle className="h-4 w-4" />
+                    <span>Upgrade to Pro</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem className="flex gap-2 items-center">
+                    <User className="h-4 w-4" />
+                    <span>Account</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="flex gap-2 items-center">
+                    <CreditCard className="h-4 w-4" />
+                    <span>Billing</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="flex gap-2 items-center">
+                    <Bell className="h-4 w-4" />
+                    <span>Notifications</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={handleSignOut}
+                    className="flex gap-2 items-center"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    <span>Log out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           )}
         </SidebarFooter>
       </Sidebar>
