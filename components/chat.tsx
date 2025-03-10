@@ -6,6 +6,9 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeHighlight from "rehype-highlight";
+import "highlight.js/styles/github-dark.css";
 
 interface Message {
   id: string;
@@ -205,13 +208,75 @@ export function Chat({
                 </AvatarFallback>
               </Avatar>
               <div
-                className={`rounded-lg px-3 py-2 max-w-[80%] ${
+                className={`rounded-lg px-4 py-3 max-w-[85%] ${
                   message.sender === "assistant"
-                    ? "bg-muted"
+                    ? "bg-muted shadow-sm"
                     : "bg-primary text-primary-foreground"
                 }`}
               >
-                <ReactMarkdown className="prose-sm dark:prose-invert break-words">
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  rehypePlugins={[rehypeHighlight]}
+                  className={`prose prose-sm max-w-none ${
+                    message.sender === "assistant"
+                      ? "dark:prose-invert"
+                      : "text-primary-foreground"
+                  } break-words`}
+                  components={{
+                    code({ node, inline, className, children, ...props }) {
+                      const match = /language-(\w+)/.exec(className || "");
+                      return !inline && match ? (
+                        <div className="not-prose rounded-md overflow-hidden my-2">
+                          <div className="bg-zinc-800 text-xs text-zinc-400 px-3 py-1 border-b border-zinc-700">
+                            {match[1]}
+                          </div>
+                          <pre className="p-0 m-0">
+                            <code className={className} {...props}>
+                              {children}
+                            </code>
+                          </pre>
+                        </div>
+                      ) : (
+                        <code
+                          className="bg-zinc-800/60 px-1.5 py-0.5 rounded text-sm"
+                          {...props}
+                        >
+                          {children}
+                        </code>
+                      );
+                    },
+                    pre({ children }) {
+                      return <pre className="p-0 m-0">{children}</pre>;
+                    },
+                    p({ children }) {
+                      return <p className="mb-2 last:mb-0">{children}</p>;
+                    },
+                    ul({ children }) {
+                      return (
+                        <ul className="list-disc pl-6 mb-2 last:mb-0">
+                          {children}
+                        </ul>
+                      );
+                    },
+                    ol({ children }) {
+                      return (
+                        <ol className="list-decimal pl-6 mb-2 last:mb-0">
+                          {children}
+                        </ol>
+                      );
+                    },
+                    li({ children }) {
+                      return <li className="mb-1 last:mb-0">{children}</li>;
+                    },
+                    blockquote({ children }) {
+                      return (
+                        <blockquote className="border-l-2 border-zinc-500 pl-4 italic">
+                          {children}
+                        </blockquote>
+                      );
+                    },
+                  }}
+                >
                   {message.content}
                 </ReactMarkdown>
               </div>

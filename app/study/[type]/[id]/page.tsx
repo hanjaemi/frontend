@@ -133,7 +133,9 @@ export default function StudyPage({
       <div className="grid gap-4 lg:grid-cols-2 flex-1 overflow-hidden">
         <div className="space-y-4 overflow-hidden flex flex-col">
           <Card className="p-3">
-            <YoutubeVideo videoId={id} ref={videoRef} />
+            <div className="relative rounded-md overflow-hidden">
+              <YoutubeVideo videoId={id} ref={videoRef} />
+            </div>
           </Card>
           <Card className="flex flex-col p-3 overflow-hidden">
             <Tabs className="flex flex-col flex-1" defaultValue="grammar">
