@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import ReactMarkdown from "react-markdown";
+import ReactMarkdown, { Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/github-dark.css";
@@ -223,7 +223,13 @@ export function Chat({
                       : "text-primary-foreground"
                   } break-words`}
                   components={{
-                    code({ node, inline, className, children, ...props }) {
+                    code: ({
+                      node,
+                      inline,
+                      className,
+                      children,
+                      ...props
+                    }: any) => {
                       const match = /language-(\w+)/.exec(className || "");
                       return !inline && match ? (
                         <div className="not-prose rounded-md overflow-hidden my-2">
@@ -245,30 +251,30 @@ export function Chat({
                         </code>
                       );
                     },
-                    pre({ children }) {
+                    pre: ({ children }: any) => {
                       return <pre className="p-0 m-0">{children}</pre>;
                     },
-                    p({ children }) {
+                    p: ({ children }: any) => {
                       return <p className="mb-2 last:mb-0">{children}</p>;
                     },
-                    ul({ children }) {
+                    ul: ({ children }: any) => {
                       return (
                         <ul className="list-disc pl-6 mb-2 last:mb-0">
                           {children}
                         </ul>
                       );
                     },
-                    ol({ children }) {
+                    ol: ({ children }: any) => {
                       return (
                         <ol className="list-decimal pl-6 mb-2 last:mb-0">
                           {children}
                         </ol>
                       );
                     },
-                    li({ children }) {
+                    li: ({ children }: any) => {
                       return <li className="mb-1 last:mb-0">{children}</li>;
                     },
-                    blockquote({ children }) {
+                    blockquote: ({ children }: any) => {
                       return (
                         <blockquote className="border-l-2 border-zinc-500 pl-4 italic">
                           {children}
