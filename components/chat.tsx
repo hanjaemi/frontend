@@ -9,6 +9,7 @@ import ReactMarkdown, { Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/github-dark.css";
+import { Bot, User } from "lucide-react";
 
 interface Message {
   id: string;
@@ -198,13 +199,19 @@ export function Chat({
                 message.sender === "assistant" ? "flex-row" : "flex-row-reverse"
               }`}
             >
-              <Avatar
-                className={
-                  message.sender === "assistant" ? "bg-primary" : "bg-muted"
-                }
-              >
-                <AvatarFallback>
-                  {message.sender === "assistant" ? "AI" : "U"}
+              <Avatar>
+                <AvatarFallback
+                  className={
+                    message.sender === "assistant"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted text-muted-foreground"
+                  }
+                >
+                  {message.sender === "assistant" ? (
+                    <Bot className="h-4 w-4" />
+                  ) : (
+                    <User className="h-4 w-4" />
+                  )}
                 </AvatarFallback>
               </Avatar>
               <div
@@ -291,7 +298,9 @@ export function Chat({
           {isLoading && (
             <div className="flex items-start gap-3">
               <Avatar className="bg-primary">
-                <AvatarFallback>AI</AvatarFallback>
+                <AvatarFallback>
+                  <Bot className="h-4 w-4 text-primary-foreground" />
+                </AvatarFallback>
               </Avatar>
               <div className="rounded-lg px-3 py-2 bg-muted">
                 <div className="flex items-center gap-1">
