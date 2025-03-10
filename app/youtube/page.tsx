@@ -21,12 +21,6 @@ export default function YouTubeAnalysis() {
   const [history, setHistory] = useState<HistoryItem[]>([]);
 
   useEffect(() => {
-    // Move localStorage access to useEffect to ensure client-side only
-    const savedVideoId = localStorage.getItem("lastYouTubeVideoId");
-    if (savedVideoId) {
-      router.push(`/study/youtube/${savedVideoId}`);
-    }
-    
     // Load search history from localStorage
     const searchHistory = localStorage.getItem("searchHistory");
     if (searchHistory) {
@@ -38,8 +32,6 @@ export default function YouTubeAnalysis() {
     try {
       const videoId = new URL(videoUrl).searchParams.get("v");
       if (videoId) {
-        localStorage.setItem("lastYouTubeVideoId", videoId);
-
         // Create a placeholder history item
         const newHistory: HistoryItem = {
           id: videoId,
@@ -56,7 +48,7 @@ export default function YouTubeAnalysis() {
         });
 
         // Navigate to the video page immediately
-        router.push(`/study/youtube/${videoId}`);
+        router.push(`/youtube/${videoId}`);
 
         // Fetch the video title in the background
         try {

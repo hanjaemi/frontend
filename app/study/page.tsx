@@ -54,7 +54,7 @@ export default function StudyPage() {
         </p>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {levels.map((level) => (
-            <Link key={level.id} href={`/level/${level.id}`}>
+            <Link key={level.id} href={`/study/${level.id}`}>
               <Card className="group transition-all hover:shadow-lg">
                 <CardContent className="aspect-square p-6 flex flex-col items-center justify-center text-center">
                   <div className="mb-6 p-3 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors">

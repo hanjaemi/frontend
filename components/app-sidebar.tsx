@@ -233,7 +233,7 @@ export function AppSidebar() {
                         asChild
                         className="h-9 justify-start gap-2 px-3 hover:bg-accent/50"
                       >
-                        <Link href={`/study/youtube/${item.id}`}>
+                        <Link href={`/youtube/${item.id}`}>
                           <div className="grid place-items-center h-4 w-4">
                             YT
                           </div>
