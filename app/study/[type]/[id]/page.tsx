@@ -130,12 +130,12 @@ export default function StudyPage({
       <Button variant="ghost" onClick={handleBack} className="mb-4 w-fit">
         <ArrowLeft className="mr-2 h-4 w-4" /> Back to Search
       </Button>
-      <div className="grid gap-6 lg:grid-cols-2 flex-1 overflow-hidden">
-        <div className="space-y-6 max-h-full overflow-hidden flex flex-col">
+      <div className="grid gap-4 lg:grid-cols-2 flex-1 overflow-hidden">
+        <div className="space-y-4 overflow-hidden flex flex-col">
           <Card className="p-3">
             <YoutubeVideo videoId={id} ref={videoRef} />
           </Card>
-          <Card className="flex flex-col p-3">
+          <Card className="flex flex-col p-3 overflow-hidden">
             <Tabs className="flex flex-col flex-1" defaultValue="grammar">
               <TabsList className="w-full">
                 <TabsTrigger value="grammar">Grammar</TabsTrigger>

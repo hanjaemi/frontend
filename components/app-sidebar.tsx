@@ -14,6 +14,7 @@ import {
   FileText,
 } from "lucide-react";
 import Link from "next/link";
+import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
 import {
@@ -92,10 +93,27 @@ const platformItems = [
   },
 ];
 
+type HistoryItem = {
+  id: string;
+  title: string;
+  content: string;
+  createdAt: Date;
+};
+
 export function AppSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { open, setOpen, toggleSidebar } = useSidebar();
+
+  const [history, setHistory] = useState<HistoryItem[]>([]);
+
+  // Only access localStorage after component is mounted (client-side)
+  useEffect(() => {
+    const searchHistory = localStorage.getItem("searchHistory");
+    if (searchHistory) {
+      setHistory(JSON.parse(searchHistory));
+    }
+  }, []);
 
   const handleSignOut = () => {
     // Here you would typically handle the sign out logic
@@ -181,7 +199,7 @@ export function AppSidebar() {
                   ))}
                 </SidebarMenu>
               ) : (
-                <div className="flex flex-col items-center gap-3 py-3">
+                <div className="flex flex-col items-center gap-1 py-3">
                   {platformItems.map((item) => (
                     <Link
                       key={item.title}
@@ -210,20 +228,19 @@ export function AppSidebar() {
               <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem>
-                    <SidebarMenuButton
-                      asChild
-                      className="h-9 justify-start gap-2 px-3 hover:bg-accent/50"
-                    >
-                      <Link href="#">
-                        <div className="grid place-items-center h-4 w-4">
-                          YT
-                        </div>
-                        <span>
-                          모델과가 알려주는 인생샷 찍는 법 [서경대 모델연기전공]
-                          | 전과자 ep.74 [EN]
-                        </span>
-                      </Link>
-                    </SidebarMenuButton>
+                    {history.map((item) => (
+                      <SidebarMenuButton
+                        asChild
+                        className="h-9 justify-start gap-2 px-3 hover:bg-accent/50"
+                      >
+                        <Link href={`/study/youtube/${item.id}`}>
+                          <div className="grid place-items-center h-4 w-4">
+                            YT
+                          </div>
+                          <span key={item.id}>{item.title || "Untitled"}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    ))}
                   </SidebarMenuItem>
                 </SidebarMenu>
               </SidebarGroupContent>

@@ -70,7 +70,7 @@ export function Vocabulary({
 }) {
   if (isLoading) {
     return (
-      <ScrollArea className={type === "level" ? "h-[780px]" : "h-[370px]"}>
+      <ScrollArea className={type === "level" ? "h-[780px]" : "h-[400px]"}>
         <VocabularyLoading />
       </ScrollArea>
     );
@@ -78,7 +78,7 @@ export function Vocabulary({
 
   return (
     <TooltipProvider>
-      <ScrollArea className={type === "level" ? "h-[780px]" : "h-[370px]"}>
+      <ScrollArea className={type === "level" ? "h-[780px]" : "h-[400px]"}>
         <div className="space-y-4 py-3 px-4">
           {data.map((word) => {
             const iconType =
@@ -103,7 +103,7 @@ export function Vocabulary({
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>
-                        {word.type && typeDescriptions[word.type] ||
+                        {(word.type && typeDescriptions[word.type]) ||
                           typeDescriptions.default}
                       </p>
                     </TooltipContent>

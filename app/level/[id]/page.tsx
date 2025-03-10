@@ -56,7 +56,7 @@ export default function LevelPage({ params }: { params: { id: string } }) {
   }, [params.id]);
 
   return (
-    <div className="flex flex-col h-[calc(100vh-1rem)] max-h-screen py-3 px-4">
+    <div className="flex flex-col h-[calc(100vh-2rem)] max-h-screen py-3 px-4">
       <div className="flex items-center mb-2">
         <Button
           variant="ghost"

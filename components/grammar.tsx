@@ -70,7 +70,7 @@ export function Grammar({
 }) {
   if (isLoading) {
     return (
-      <ScrollArea className={type === "level" ? "h-[780px]" : "h-[370px]"}>
+      <ScrollArea className={type === "level" ? "h-[780px]" : "h-[400px]"}>
         <GrammarLoading />
       </ScrollArea>
     );
@@ -78,7 +78,7 @@ export function Grammar({
 
   return (
     <TooltipProvider>
-      <ScrollArea className={type === "level" ? "h-[780px]" : "h-[370px]"}>
+      <ScrollArea className={type === "level" ? "h-[780px]" : "h-[400px]"}>
         <div className="space-y-4 py-3 px-4">
           {data.map((rule) => {
             const iconType =
@@ -102,7 +102,7 @@ export function Grammar({
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>
-                        {rule.type && typeDescriptions[rule.type] ||
+                        {(rule.type && typeDescriptions[rule.type]) ||
                           typeDescriptions.default}
                       </p>
                     </TooltipContent>

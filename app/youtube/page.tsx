@@ -8,23 +8,78 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Link2, Search } from "lucide-react";
 
+type HistoryItem = {
+  id: string;
+  title: string;
+  content: string;
+  createdAt: Date;
+};
+
 export default function YouTubeAnalysis() {
   const [videoUrl, setVideoUrl] = useState("");
   const router = useRouter();
+  const [history, setHistory] = useState<HistoryItem[]>([]);
 
   useEffect(() => {
+    // Move localStorage access to useEffect to ensure client-side only
     const savedVideoId = localStorage.getItem("lastYouTubeVideoId");
     if (savedVideoId) {
       router.push(`/study/youtube/${savedVideoId}`);
     }
+    
+    // Load search history from localStorage
+    const searchHistory = localStorage.getItem("searchHistory");
+    if (searchHistory) {
+      setHistory(JSON.parse(searchHistory));
+    }
   }, [router]);
 
-  const handleAnalyze = () => {
+  const handleAnalyze = async () => {
     try {
       const videoId = new URL(videoUrl).searchParams.get("v");
       if (videoId) {
         localStorage.setItem("lastYouTubeVideoId", videoId);
+
+        // Create a placeholder history item
+        const newHistory: HistoryItem = {
+          id: videoId,
+          title: "Loading...", // Placeholder until we get the actual title
+          content: videoUrl,
+          createdAt: new Date(),
+        };
+
+        // Add to history first with placeholder
+        setHistory((prev) => {
+          const updatedHistory = [newHistory, ...prev];
+          localStorage.setItem("searchHistory", JSON.stringify(updatedHistory));
+          return updatedHistory;
+        });
+
+        // Navigate to the video page immediately
         router.push(`/study/youtube/${videoId}`);
+
+        // Fetch the video title in the background
+        try {
+          const response = await fetch(
+            `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`
+          );
+          const data = await response.json();
+          const videoTitle = data.title;
+
+          // Update history with actual title
+          setHistory((prev) => {
+            const updatedHistory = prev.map((item) =>
+              item.id === videoId ? { ...item, title: videoTitle } : item
+            );
+            localStorage.setItem(
+              "searchHistory",
+              JSON.stringify(updatedHistory)
+            );
+            return updatedHistory;
+          });
+        } catch (fetchError) {
+          console.error("Failed to fetch video title:", fetchError);
+        }
       }
     } catch (error) {
       console.error("Invalid URL:", error);
