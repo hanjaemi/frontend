@@ -40,19 +40,15 @@ export default function LevelPage({ params }: { params: { id: string } }) {
   }, []);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      const levelData = mockLevels[params.id as keyof typeof mockLevels];
-      console.log(levelData);
-      if (levelData) {
-        setStudyData(levelData);
-        setSelectedLesson(levelData.lessons[0].id);
-      } else {
-        console.error(`No data found for level ${params.id}`);
-      }
-      setIsLoading(false);
-    }, 500);
-
-    return () => clearTimeout(timer);
+    const levelData = mockLevels[params.id as keyof typeof mockLevels];
+    console.log(levelData);
+    if (levelData) {
+      setStudyData(levelData);
+      setSelectedLesson(levelData.lessons[0].id);
+    } else {
+      console.error(`No data found for level ${params.id}`);
+    }
+    setIsLoading(false);
   }, [params.id]);
 
   return (

@@ -1,8 +1,9 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
 import { BookOpen } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 
+// TODO: Fetch levels from API
 const levels = [
   {
     id: 1,

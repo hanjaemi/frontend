@@ -1,13 +1,14 @@
 "use client";
 
-import { Inter } from "next/font/google";
 import "./globals.css";
-import { useState, useEffect, type ReactNode } from "react";
+import { Inter } from "next/font/google";
+import { type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeToggleCorner } from "@/components/theme-toggle-corner";
+import { Toaster } from "sonner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,6 +20,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider>
+          <Toaster closeButton position="top-right" theme="system" />
           <ThemeToggleCorner />
           <div className="flex min-h-screen">
             {showSidebar ? (
