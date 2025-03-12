@@ -79,8 +79,8 @@ export function Test({ level }: { level: string }) {
   };
 
   return (
-    <div className="h-full flex flex-col max-h-full overflow-hidden">
-      <ScrollArea className="flex-1 pr-4 overflow-auto">
+    <div className="flex flex-col h-full rounded-lg">
+      <ScrollArea className="flex-1">
         <div className="space-y-4">
           {questions.map((question) => (
             <Card key={question.id}>
@@ -138,7 +138,7 @@ export function Test({ level }: { level: string }) {
       </ScrollArea>
       {!showResults && (
         <Button
-          className="w-full h-9"
+          className="h-9"
           onClick={handleSubmit}
           disabled={Object.keys(answers).length !== questions.length}
         >

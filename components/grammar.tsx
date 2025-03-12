@@ -7,8 +7,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
+import { cn } from "@/lib/utils";
 
 type GrammarType = "writing" | "speaking" | "common";
 
@@ -70,7 +70,12 @@ export function Grammar({
 }) {
   if (isLoading) {
     return (
-      <ScrollArea className={type === "level" ? "h-[780px]" : "h-[400px]"}>
+      <ScrollArea
+        className={cn(
+          "flex-1 p-4",
+          type === "level" ? "h-[780px] flex-1" : "h-[400px]"
+        )}
+      >
         <GrammarLoading />
       </ScrollArea>
     );
@@ -78,54 +83,58 @@ export function Grammar({
 
   return (
     <TooltipProvider>
-      <ScrollArea className={type === "level" ? "h-[780px]" : "h-[400px]"}>
-        <div className="space-y-4 py-3 px-4">
-          {data.map((rule) => {
-            const iconType =
-              rule.type && typeIcons[rule.type] ? rule.type : "default";
-            const Icon = typeIcons[iconType];
-            return (
-              <Button
-                key={rule.id}
-                variant="outline"
-                className="w-full h-auto py-3 justify-start text-left hover:bg-muted cursor-pointer"
-                onClick={() => onGrammarClick(rule.title, rule.timestamp)}
-                disabled={disabled}
-              >
-                <div className="flex items-start gap-4 w-full">
-                  {/* Wrap the Icon in a div instead of directly in TooltipTrigger to avoid SlotClone issues */}
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <div>
-                        <Icon className="h-5 w-5 mt-0.5 flex-shrink-0" />
-                      </div>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>
-                        {(rule.type && typeDescriptions[rule.type]) ||
-                          typeDescriptions.default}
+      <div className="flex flex-col h-full">
+        <ScrollArea
+          className={cn("flex-1", type === "level" ? "h-[780px]" : "h-[400px]")}
+        >
+          <div className="space-y-3">
+            {data.map((rule) => {
+              const iconType =
+                rule.type && typeIcons[rule.type] ? rule.type : "default";
+              const Icon = typeIcons[iconType];
+              return (
+                <Button
+                  key={rule.id}
+                  variant="outline"
+                  className="w-full h-auto py-3 justify-start text-left hover:bg-muted cursor-pointer"
+                  onClick={() => onGrammarClick(rule.title, rule.timestamp)}
+                  disabled={disabled}
+                >
+                  <div className="flex items-start gap-4 w-full min-h-[64px]">
+                    {/* Wrap the Icon in a div instead of directly in TooltipTrigger to avoid SlotClone issues */}
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <div className="rounded-md bg-muted p-2 shrink-0">
+                          <Icon className="h-4 w-4" />
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>
+                          {(rule.type && typeDescriptions[rule.type]) ||
+                            typeDescriptions.default}
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                    <div className="flex-1 space-y-1">
+                      <h3 className="font-semibold leading-none break-words">
+                        {rule.title}
+                      </h3>
+                      <p className="text-sm text-muted-foreground whitespace-normal break-words">
+                        {rule.description}
                       </p>
-                    </TooltipContent>
-                  </Tooltip>
-                  <div className="flex-1 space-y-1 min-w-0">
-                    <h3 className="font-semibold leading-none break-words">
-                      {rule.title}
-                    </h3>
-                    <p className="text-sm text-muted-foreground whitespace-normal break-words">
-                      {rule.description}
-                    </p>
-                    {rule.timestamp && (
-                      <p className="text-xs text-muted-foreground">
-                        Timestamp: {rule.timestamp}
-                      </p>
-                    )}
+                      {rule.timestamp && (
+                        <p className="text-xs text-muted-foreground">
+                          Timestamp: {rule.timestamp}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </Button>
-            );
-          })}
-        </div>
-      </ScrollArea>
+                </Button>
+              );
+            })}
+          </div>
+        </ScrollArea>
+      </div>
     </TooltipProvider>
   );
 }

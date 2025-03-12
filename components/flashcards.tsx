@@ -93,8 +93,8 @@ export function Flashcards({
       // Handle left arrow key - previous card
       if (e.key === "ArrowLeft") {
         e.preventDefault();
-        setCurrentCard((prev) =>
-          (prev - 1 + flashcards.length) % flashcards.length
+        setCurrentCard(
+          (prev) => (prev - 1 + flashcards.length) % flashcards.length
         );
         setIsFlipped(false);
       }
@@ -139,7 +139,7 @@ export function Flashcards({
   const currentType = flashcards[currentCard].type;
 
   return (
-    <div className="flex h-full flex-col items-center justify-center gap-2">
+    <div className="flex flex-col h-full items-center justify-center">
       <Tabs
         defaultValue="all"
         value={activeTab}
@@ -164,15 +164,21 @@ export function Flashcards({
       {/* Keyboard controls hint */}
       <div className="text-xs text-muted-foreground mb-2 flex items-center justify-center gap-3">
         <span className="flex items-center">
-          <kbd className="px-1 py-0.5 text-xs border rounded-sm mr-1 dark:border-gray-700">←</kbd>
+          <kbd className="px-1 py-0.5 text-xs border rounded-sm mr-1 dark:border-gray-700">
+            ←
+          </kbd>
           <span>Prev</span>
         </span>
         <span className="flex items-center">
-          <kbd className="px-1 py-0.5 text-xs border rounded-sm mr-1 dark:border-gray-700">→</kbd>
+          <kbd className="px-1 py-0.5 text-xs border rounded-sm mr-1 dark:border-gray-700">
+            →
+          </kbd>
           <span>Next</span>
         </span>
         <span className="flex items-center">
-          <kbd className="px-1 py-0.5 text-xs border rounded-sm mr-1 dark:border-gray-700">Enter</kbd>
+          <kbd className="px-1 py-0.5 text-xs border rounded-sm mr-1 dark:border-gray-700">
+            Enter
+          </kbd>
           <span>Flip</span>
         </span>
       </div>

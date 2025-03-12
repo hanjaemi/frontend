@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import ReactMarkdown, { Components } from "react-markdown";
+import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/github-dark.css";
@@ -32,13 +32,13 @@ export function Chat({
   selectedWord: string | null;
   onLoadingChange?: (loading: boolean) => void;
 }) {
-  // Ref for the messages end element
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const isInitialMount = useRef(true);
 
+  // TODO: Fetch messages from API
   useEffect(() => {
     const storageKey = `chatMessages_${level}`;
     try {
@@ -53,7 +53,7 @@ export function Chat({
         setMessages([
           {
             id: generateMessageId(),
-            content: "안녕하세요, 어떻게 도와줗까?",
+            content: "안녕, 어떻게 도와줄까?",
             sender: "assistant",
           },
         ]);
@@ -190,7 +190,7 @@ export function Chat({
 
   return (
     <div className="flex flex-col h-full border rounded-lg">
-      <ScrollArea className="flex-1 p-4">
+      <ScrollArea className="flex-1 p-3">
         <div className="space-y-4">
           {messages.map((message) => (
             <div
