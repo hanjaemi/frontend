@@ -6,7 +6,6 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
-  Settings,
   ArrowUpCircle,
   Bell,
   CreditCard,
@@ -16,7 +15,6 @@ import {
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
-
 import {
   Sidebar,
   SidebarContent,
@@ -28,7 +26,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -41,40 +38,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { JaemiLogo } from "@/components/jaemi-logo";
 
-const JaemiLogo = () => (
-  <svg
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      d="M12 2L2 7L12 12L22 7L12 2Z"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M2 17L12 22L22 17"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M2 12L12 17L22 12"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-);
-
-// Platform navigation items
 const platformItems = [
   {
     title: "Learning",
@@ -98,15 +63,16 @@ type HistoryItem = {
   title: string;
   content: string;
   createdAt: Date;
+  type: "youtube" | "topic" | "study";
 };
 
 export function AppSidebar() {
-  const pathname = usePathname();
   const router = useRouter();
+  const pathname = usePathname();
   const { open, setOpen, toggleSidebar } = useSidebar();
-
   const [history, setHistory] = useState<HistoryItem[]>([]);
 
+  // TODO: Fetch history from API
   // Only access localStorage after component is mounted (client-side)
   useEffect(() => {
     const searchHistory = localStorage.getItem("searchHistory");
@@ -121,22 +87,13 @@ export function AppSidebar() {
   };
 
   return (
-    <div
-      style={
-        {
-          "--sidebar-width": "16rem",
-          "--sidebar-width-icon": "60px",
-        } as React.CSSProperties
-      }
-      className="flex relative"
-    >
+    <div className="flex relative">
       <Sidebar
-        className="border-r border-border bg-sidebar transition-all duration-300 ease-in-out"
+        className={cn(
+          "border-r border-border bg-sidebar transition-all duration-300 ease-in-out",
+          open ? "w-64 min-w-[16rem]" : "w-[60px] min-w-[60px]"
+        )}
         collapsible="none"
-        style={{
-          width: open ? "var(--sidebar-width)" : "var(--sidebar-width-icon)",
-          minWidth: open ? "var(--sidebar-width)" : "var(--sidebar-width-icon)",
-        }}
       >
         <SidebarHeader
           className={cn(
@@ -147,7 +104,7 @@ export function AppSidebar() {
           {open ? (
             <Link href="/" className="flex items-center gap-2">
               <div className="flex h-8 w-8 items-center justify-center rounded bg-primary text-primary-foreground">
-                <JaemiLogo />
+                <JaemiLogo size={28} />
               </div>
               <div className="flex flex-col text-left">
                 <h1 className="text-sm font-semibold">HanJaemi</h1>
@@ -157,7 +114,7 @@ export function AppSidebar() {
           ) : (
             <Link href="/" className="flex items-center justify-center">
               <div className="flex h-10 w-10 items-center justify-center rounded bg-primary text-primary-foreground">
-                <JaemiLogo />
+                <JaemiLogo size={32} />
               </div>
             </Link>
           )}
