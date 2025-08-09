@@ -12,7 +12,7 @@ import { Summary } from "@/components/summary";
 import { Test } from "@/components/exam";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import { mockLevels } from "@/data/mockLessons";
+import { fetchLessonData, Lesson } from "@/data/dataService";
 
 export default function LevelPage({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -20,16 +20,11 @@ export default function LevelPage({ params }: { params: { id: string } }) {
   const [selectedGrammar, setSelectedGrammar] = useState<string | null>(null);
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
   const [isChatLoading, setIsChatLoading] = useState(false);
-  const [studyData, setStudyData] = useState<any>(null);
+  const [lessonData, setLessonData] = useState<Lesson | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedLesson, setSelectedLesson] = useState<string | null>(null);
 
-  const currentLesson = useMemo(() => {
-    if (!selectedLesson || !studyData?.lessons) return studyData?.lessons?.[0];
-    return studyData.lessons.find(
-      (lesson: any) => lesson.id === selectedLesson
-    );
-  }, [selectedLesson, studyData]);
+  // For now, we're focusing on lesson 1, but this can be extended for multiple lessons
+  const currentLesson = lessonData;
 
   const handleGrammarClick = useCallback((grammar: string) => {
     setSelectedGrammar(grammar);
@@ -40,15 +35,25 @@ export default function LevelPage({ params }: { params: { id: string } }) {
   }, []);
 
   useEffect(() => {
-    const levelData = mockLevels[params.id as keyof typeof mockLevels];
-    console.log(levelData);
-    if (levelData) {
-      setStudyData(levelData);
-      setSelectedLesson(levelData.lessons[0].id);
-    } else {
-      console.error(`No data found for level ${params.id}`);
-    }
-    setIsLoading(false);
+    const loadLessonData = async () => {
+      try {
+        setIsLoading(true);
+        // Fetch lesson 1 for the specified difficulty
+        const data = await fetchLessonData(params.id, "1");
+        console.log("Fetched lesson data:", data);
+        if (data) {
+          setLessonData(data);
+        } else {
+          console.error(`No data found for difficulty ${params.id}, lesson 1`);
+        }
+      } catch (error) {
+        console.error("Error loading lesson data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadLessonData();
   }, [params.id]);
 
   return (
@@ -64,19 +69,11 @@ export default function LevelPage({ params }: { params: { id: string } }) {
       </div>
 
       <div className="mb-3">
-        <Tabs
-          defaultValue={studyData?.lessons?.[0]?.id}
-          value={selectedLesson || ""}
-          onValueChange={setSelectedLesson}
-        >
-          <TabsList className="w-full">
-            {studyData?.lessons?.map((lesson: any) => (
-              <TabsTrigger key={lesson.id} value={lesson.id}>
-                Lesson {lesson.number}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </Tabs>
+        <div className="flex items-center justify-center p-2 bg-muted rounded-md">
+          <h2 className="text-lg font-semibold">
+            {lessonData ? `Lesson ${lessonData.number}: ${lessonData.title}` : 'Loading...'}
+          </h2>
+        </div>
       </div>
 
       <div className="grid gap-4 flex-1 overflow-hidden lg:grid-cols-2">
@@ -127,8 +124,8 @@ export default function LevelPage({ params }: { params: { id: string } }) {
             <TabsContent value="flashcards" className="flex-1 overflow-auto">
               <Flashcards
                 level={params.id}
-                vocabulary={currentLesson?.vocabulary}
-                grammar={currentLesson?.grammar}
+                vocabulary={currentLesson?.vocabulary || []}
+                grammar={currentLesson?.grammar || []}
                 isLoading={isLoading}
               />
             </TabsContent>

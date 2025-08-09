@@ -16,6 +16,12 @@ type GrammarRule = {
   id: string;
   title: string;
   description: string;
+  descriptionKorean?: string;
+  descriptionEnglish?: string;
+  example?: string;
+  examples?: string[];
+  translation?: string;
+  translations?: string[];
   type?: GrammarType;
   timestamp?: string;
 };
@@ -100,7 +106,7 @@ export function Grammar({
                   onClick={() => onGrammarClick(rule.title, rule.timestamp)}
                   disabled={disabled}
                 >
-                  <div className="flex items-start gap-4 w-full min-h-[64px]">
+                                     <div className="flex items-start gap-4 w-full min-h-[120px]">
                     {/* Wrap the Icon in a div instead of directly in TooltipTrigger to avoid SlotClone issues */}
                     <Tooltip>
                       <TooltipTrigger>
@@ -115,13 +121,49 @@ export function Grammar({
                         </p>
                       </TooltipContent>
                     </Tooltip>
-                    <div className="flex-1 space-y-1">
-                      <h3 className="font-semibold leading-none break-words">
-                        {rule.title}
-                      </h3>
-                      <p className="text-sm text-muted-foreground whitespace-normal break-words">
-                        {rule.description}
-                      </p>
+                                         <div className="flex-1 space-y-2">
+                       <h3 className="font-semibold leading-none break-words">
+                         {rule.title}
+                       </h3>
+                       
+                       {/* Display both Korean and English descriptions */}
+                       {rule.descriptionKorean && rule.descriptionEnglish ? (
+                         <div className="space-y-1">
+                           <p className="text-sm text-foreground whitespace-normal break-words">
+                             🇰🇷 {rule.descriptionKorean}
+                           </p>
+                           <p className="text-sm text-muted-foreground whitespace-normal break-words">
+                             🇬🇧 {rule.descriptionEnglish}
+                           </p>
+                         </div>
+                       ) : (
+                         <p className="text-sm text-muted-foreground whitespace-normal break-words">
+                           {rule.description}
+                         </p>
+                       )}
+                      
+                      {/* Display examples */}
+                      {rule.examples && rule.examples.length > 0 && (
+                        <div className="space-y-1">
+                          <p className="text-xs font-medium text-muted-foreground">Examples:</p>
+                          <div className="space-y-1">
+                            {rule.examples.slice(0, 3).map((example, index) => (
+                              <div key={index} className="text-xs bg-muted/50 p-2 rounded">
+                                <p className="font-medium text-foreground">{example}</p>
+                                {rule.translations && rule.translations[index] && (
+                                  <p className="text-muted-foreground mt-1">{rule.translations[index]}</p>
+                                )}
+                              </div>
+                            ))}
+                            {rule.examples.length > 3 && (
+                              <p className="text-xs text-muted-foreground italic">
+                                +{rule.examples.length - 3} more examples...
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                      
                       {rule.timestamp && (
                         <p className="text-xs text-muted-foreground">
                           Timestamp: {rule.timestamp}

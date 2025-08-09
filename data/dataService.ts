@@ -33,6 +33,36 @@ export type GrammarFromDB = {
   type: string;
 };
 
+// API Response types for the specific lesson endpoint
+export type LessonApiResponse = {
+  difficulty_id: number;
+  lesson_id: number;
+  grammars: {
+    grammarId: number;
+    lessonId: number;
+    title: string;
+    description: string;
+    example: string;
+    translation: string;
+    type: string;
+  }[];
+  vocabs: {
+    vocabId: number;
+    lessonId: number;
+    word: string;
+    meaning: string;
+    context: string;
+    type: string;
+  }[];
+  exams: {
+    examId: number;
+    lessonId: number;
+    question: string;
+    options: string;
+    correctAnswer: string;
+  }[];
+};
+
 // Transformed types for the frontend
 export type Difficulty = {
   id: string;
@@ -54,8 +84,12 @@ export type Grammar = {
   id: string;
   title: string;
   description: string;
+  descriptionKorean?: string;
+  descriptionEnglish?: string;
   example?: string;
+  examples?: string[];
   translation?: string;
+  translations?: string[];
   type?: 'writing' | 'speaking' | 'common';
 };
 
@@ -64,7 +98,7 @@ export type Vocabulary = {
   word: string;
   meaning: string;
   context?: string;
-  type?: string;
+  type?: 'important' | 'common' | 'new';
 };
 
 export type StudyLevel = {
@@ -72,6 +106,20 @@ export type StudyLevel = {
   description: string;
   lessons: Lesson[];
 };
+
+// Helper function to map API vocab types to frontend types
+function mapVocabType(apiType: string): 'important' | 'common' | 'new' {
+  switch (apiType.toLowerCase()) {
+    case 'important':
+    case 'top 100':
+      return 'important';
+    case 'rarely use':
+    case 'new':
+      return 'new';
+    default:
+      return 'common';
+  }
+}
 
 // API service functions
 export async function fetchDifficulties(): Promise<Difficulty[]> {
@@ -138,7 +186,7 @@ export async function fetchLessonsForDifficulty(difficultyId: string): Promise<L
           word: v.word,
           meaning: v.meaning,
           context: v.context,
-          type: v.type
+          type: mapVocabType(v.type)
         }))
     }));
   } catch (error) {
@@ -190,3 +238,68 @@ export const createMockLevels = async (): Promise<Record<string, StudyLevel>> =>
     return {};
   }
 };
+
+// Helper function to safely parse JSON strings from API
+function safeParseJSON(jsonString: string): string[] {
+  try {
+    const parsed = JSON.parse(jsonString);
+    return Array.isArray(parsed) ? parsed : [jsonString];
+  } catch (error) {
+    console.warn('Failed to parse JSON:', jsonString);
+    return [jsonString];
+  }
+}
+
+// Function to fetch specific lesson data from the API
+
+export async function fetchLessonData(difficultyId: string, lessonId: string): Promise<Lesson | null> {
+  try {
+    const response = await fetch(`/api/lessons/${difficultyId}/${lessonId}`, {
+      cache: 'no-store'
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch lesson data');
+    }
+    
+    const data: LessonApiResponse = await response.json();
+    
+    // Transform the API response to match our frontend types
+    return {
+      id: `lesson-${difficultyId}-${lessonId}`,
+      number: lessonId === "1" ? 1 : parseInt(lessonId),
+      title: `Lesson ${lessonId}`, // You might want to get this from another API
+      grammar: data.grammars.map(g => {
+        const examples = safeParseJSON(g.example);
+        const translations = safeParseJSON(g.translation);
+        const descriptions = safeParseJSON(g.description);
+        
+                 return {
+           id: `grammar-${g.grammarId}`,
+           title: g.title,
+           description: descriptions.length > 0 ? descriptions[0] : g.description,
+           descriptionKorean: descriptions.length > 0 ? descriptions[0] : undefined,
+           descriptionEnglish: descriptions.length > 1 ? descriptions[1] : undefined,
+           examples: examples,
+           translations: translations,
+           // Keep single example/translation for backward compatibility
+           example: examples.length > 0 ? examples[0] : g.example,
+           translation: translations.length > 0 ? translations[0] : g.translation,
+           type: ['writing', 'speaking', 'common'].includes(g.type) 
+             ? g.type as 'writing' | 'speaking' | 'common' 
+             : 'common'
+         };
+      }),
+      vocabulary: data.vocabs.map(v => ({
+        id: `vocab-${v.vocabId}`,
+        word: v.word,
+        meaning: v.meaning,
+        context: v.context,
+        type: mapVocabType(v.type)
+      }))
+    };
+  } catch (error) {
+    console.error('Error fetching lesson data:', error);
+    return null;
+  }
+}
