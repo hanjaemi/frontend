@@ -53,4 +53,3 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           source: "deployment.tar.gz"
           target: "/home/${{ secrets.EC2_USER }}/nextjs-app"
-  
