@@ -5,27 +5,23 @@ export async function GET(
   { params }: { params: { difficultyId: string } }
 ) {
   try {
-    const res = await fetch(`http://3.35.22.146:8080/lessons?difficultyId=${params.difficultyId}`, {
+    const { difficultyId } = params;
+    
+    const response = await fetch(`http://3.35.22.146:8080/difficulty/${difficultyId}/lessons`, {
       cache: 'no-store',
-      headers: {
-        'Content-Type': 'application/json',
-      },
     });
 
-    if (!res.ok) {
-      console.error(`Backend API error: ${res.status} ${res.statusText}`);
-      return NextResponse.json(
-        { message: 'Failed to fetch lessons' },
-        { status: 500 }
-      );
+    if (!response.ok) {
+      throw new Error(`Failed to fetch lessons for difficulty ${difficultyId}`);
     }
 
-    const data = await res.json();
+    const data = await response.json();
+    
     return NextResponse.json(data);
   } catch (error) {
-    console.error('Lessons API error:', error);
+    console.error('Error fetching lessons:', error);
     return NextResponse.json(
-      { message: 'Internal server error' },
+      { error: 'Failed to fetch lessons' },
       { status: 500 }
     );
   }

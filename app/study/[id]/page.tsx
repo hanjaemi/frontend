@@ -12,7 +12,31 @@ import { Summary } from "@/components/summary";
 import { Test } from "@/components/exam";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import { fetchLessonData, Lesson } from "@/data/dataService";
+import { fetchLessonData, fetchLessonsForDifficultyFromAPI, Lesson } from "@/data/dataService";
+
+// Helper functions (copied from dataService to avoid circular imports)
+function safeParseJSON(jsonString: string): string[] {
+  try {
+    const parsed = JSON.parse(jsonString);
+    return Array.isArray(parsed) ? parsed : [jsonString];
+  } catch (error) {
+    console.warn('Failed to parse JSON:', jsonString);
+    return [jsonString];
+  }
+}
+
+function mapVocabType(apiType: string): 'important' | 'common' | 'new' {
+  switch (apiType.toLowerCase()) {
+    case 'important':
+    case 'top 100':
+      return 'important';
+    case 'rarely use':
+    case 'new':
+      return 'new';
+    default:
+      return 'common';
+  }
+}
 
 export default function LevelPage({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -20,11 +44,77 @@ export default function LevelPage({ params }: { params: { id: string } }) {
   const [selectedGrammar, setSelectedGrammar] = useState<string | null>(null);
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
   const [isChatLoading, setIsChatLoading] = useState(false);
-  const [lessonData, setLessonData] = useState<Lesson | null>(null);
+  const [currentLessonData, setCurrentLessonData] = useState<Lesson | null>(null);
+  const [lessons, setLessons] = useState<any[]>([]);
+  const [selectedLessonId, setSelectedLessonId] = useState<string>("1");
   const [isLoading, setIsLoading] = useState(true);
 
-  // For now, we're focusing on lesson 1, but this can be extended for multiple lessons
-  const currentLesson = lessonData;
+
+  // Load lessons for the difficulty
+  useEffect(() => {
+    const loadLessons = async () => {
+      try {
+        setIsLoading(true);
+        const lessonsData = await fetchLessonsForDifficultyFromAPI(params.id);
+        // Sort lessons by lesson_id to ensure consistent order
+        const sortedLessons = lessonsData.sort((a, b) => a.lesson_id - b.lesson_id);
+        setLessons(sortedLessons);
+        if (sortedLessons.length > 0) {
+          setSelectedLessonId(sortedLessons[0].lesson_id?.toString() || "1");
+        }
+      } catch (error) {
+        console.error("Error loading lessons:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadLessons();
+  }, [params.id]);
+
+  // Load current lesson data from the lessons array
+  useEffect(() => {
+    if (!selectedLessonId || lessons.length === 0) return;
+    
+    const selectedLesson = lessons.find(lesson => lesson.lesson_id.toString() === selectedLessonId);
+    if (selectedLesson) {
+      // Transform the lesson data to match our Lesson type
+      const transformedLesson: Lesson = {
+        id: `lesson-${params.id}-${selectedLesson.lesson_id}`,
+        number: selectedLesson.lesson_id,
+        title: `Lesson ${selectedLesson.lesson_id}`,
+        grammar: selectedLesson.grammars?.map((g: any) => {
+          const examples = safeParseJSON(g.example);
+          const translations = safeParseJSON(g.translation);
+          const descriptions = safeParseJSON(g.description);
+          
+          return {
+            id: `grammar-${g.grammarId}`,
+            title: g.title,
+            description: descriptions.length > 0 ? descriptions[0] : g.description,
+            descriptionKorean: descriptions.length > 0 ? descriptions[0] : undefined,
+            descriptionEnglish: descriptions.length > 1 ? descriptions[1] : undefined,
+            examples: examples,
+            translations: translations,
+            example: examples.length > 0 ? examples[0] : g.example,
+            translation: translations.length > 0 ? translations[0] : g.translation,
+            type: ['writing', 'speaking', 'common'].includes(g.type) 
+              ? g.type as 'writing' | 'speaking' | 'common' 
+              : 'common'
+          };
+        }) || [],
+        vocabulary: selectedLesson.vocabs?.map((v: any) => ({
+          id: `vocab-${v.vocabId}`,
+          word: v.word,
+          meaning: v.meaning,
+          context: v.context,
+          type: mapVocabType(v.type)
+        })) || []
+      };
+      
+      setCurrentLessonData(transformedLesson);
+    }
+  }, [selectedLessonId, lessons, params.id]);
 
   const handleGrammarClick = useCallback((grammar: string) => {
     setSelectedGrammar(grammar);
@@ -34,27 +124,7 @@ export default function LevelPage({ params }: { params: { id: string } }) {
     setSelectedWord(word);
   }, []);
 
-  useEffect(() => {
-    const loadLessonData = async () => {
-      try {
-        setIsLoading(true);
-        // Fetch lesson 1 for the specified difficulty
-        const data = await fetchLessonData(params.id, "1");
-        console.log("Fetched lesson data:", data);
-        if (data) {
-          setLessonData(data);
-        } else {
-          console.error(`No data found for difficulty ${params.id}, lesson 1`);
-        }
-      } catch (error) {
-        console.error("Error loading lesson data:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
 
-    loadLessonData();
-  }, [params.id]);
 
   return (
     <div className="flex flex-col h-[calc(100vh-2rem)] max-h-screen py-3 px-4">
@@ -68,13 +138,21 @@ export default function LevelPage({ params }: { params: { id: string } }) {
         </Button>
       </div>
 
-      <div className="mb-3">
-        <div className="flex items-center justify-center p-2 bg-muted rounded-md">
-          <h2 className="text-lg font-semibold">
-            {lessonData ? `Lesson ${lessonData.number}: ${lessonData.title}` : 'Loading...'}
-          </h2>
-        </div>
-      </div>
+             {/* Lesson Navigation Tabs */}
+       <div className="mb-3">
+         <Tabs
+           value={selectedLessonId}
+           onValueChange={setSelectedLessonId}
+         >
+                      <TabsList className="w-full">
+                             {lessons.map((lesson, index) => (
+                 <TabsTrigger key={lesson.lesson_id} value={lesson.lesson_id.toString()}>
+                   Lesson {index + 1}
+                 </TabsTrigger>
+               ))}
+            </TabsList>
+         </Tabs>
+       </div>
 
       <div className="grid gap-4 flex-1 overflow-hidden lg:grid-cols-2">
         <Card className="p-3 flex flex-col overflow-hidden">
@@ -85,21 +163,21 @@ export default function LevelPage({ params }: { params: { id: string } }) {
             </TabsList>
             <TabsContent value="grammar" className="flex-1 overflow-auto">
               <Grammar
-                type="level"
-                id={params.id}
+                type="lesson"
+                id={selectedLessonId}
                 onGrammarClick={handleGrammarClick}
                 disabled={isChatLoading}
-                data={currentLesson?.grammar || []}
+                data={currentLessonData?.grammar || []}
                 isLoading={isLoading}
               />
             </TabsContent>
             <TabsContent value="vocabulary" className="flex-1 overflow-auto">
               <Vocabulary
-                type="level"
-                id={params.id}
+                type="lesson"
+                id={selectedLessonId}
                 onWordClick={handleWordClick}
                 disabled={isChatLoading}
-                data={currentLesson?.vocabulary || []}
+                data={currentLessonData?.vocabulary || []}
                 isLoading={isLoading}
               />
             </TabsContent>
@@ -115,7 +193,7 @@ export default function LevelPage({ params }: { params: { id: string } }) {
             </TabsList>
             <TabsContent value="chat" className="flex-1 overflow-auto">
               <Chat
-                level={params.id}
+                level={selectedLessonId}
                 selectedGrammar={selectedGrammar}
                 selectedWord={selectedWord}
                 onLoadingChange={setIsChatLoading}
@@ -123,17 +201,17 @@ export default function LevelPage({ params }: { params: { id: string } }) {
             </TabsContent>
             <TabsContent value="flashcards" className="flex-1 overflow-auto">
               <Flashcards
-                level={params.id}
-                vocabulary={currentLesson?.vocabulary || []}
-                grammar={currentLesson?.grammar || []}
+                level={selectedLessonId}
+                vocabulary={currentLessonData?.vocabulary || []}
+                grammar={currentLessonData?.grammar || []}
                 isLoading={isLoading}
               />
             </TabsContent>
             <TabsContent value="summary" className="flex-1 overflow-auto">
-              <Summary level={params.id} />
+              <Summary level={selectedLessonId} />
             </TabsContent>
             <TabsContent value="test" className="flex-1 overflow-auto">
-              <Test level={params.id} />
+              <Test level={selectedLessonId} />
             </TabsContent>
           </Tabs>
         </Card>

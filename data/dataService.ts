@@ -250,8 +250,27 @@ function safeParseJSON(jsonString: string): string[] {
   }
 }
 
-// Function to fetch specific lesson data from the API
+// Function to fetch all lessons for a difficulty
+export async function fetchLessonsForDifficultyFromAPI(difficultyId: string): Promise<any[]> {
+  try {
+    const response = await fetch(`/api/lessons/${difficultyId}`, {
+      cache: 'no-store'
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch lessons for difficulty');
+    }
+    
+    const data = await response.json();
+    // The API returns an array of lesson objects with lesson_id, grammars, vocabs, exams
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error('Error fetching lessons for difficulty:', error);
+    return [];
+  }
+}
 
+// Function to fetch specific lesson data from the API
 export async function fetchLessonData(difficultyId: string, lessonId: string): Promise<Lesson | null> {
   try {
     const response = await fetch(`/api/lessons/${difficultyId}/${lessonId}`, {
