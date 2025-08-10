@@ -1,0 +1,66 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: frontend/frontend/package-lock.json
+
+      # Install deps inside the nested frontend folder
+      - name: Install dependencies (with fallback)
+        working-directory: frontend/frontend
+        run: |
+          npm ci || npm install --legacy-peer-deps
+
+      - name: Run lint
+        working-directory: frontend/frontend
+        run: npm run lint
+
+      - name: Build Next.js
+        working-directory: frontend/frontend
+        run: npm run build
+
+      - name: Create deployment package
+        working-directory: frontend/frontend
+        run: |
+          tar -czf ../../deployment.tar.gz .next package.json package-lock.json public next.config.mjs
+
+      - name: Copy build files to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+          source: "./deployment.tar.gz"
+          target: "/home/${{ secrets.EC2_USER }}/nextjs-app"
+
+      # Optional deploy via SSH (uncomment to enable)
+      # - name: Deploy to EC2
+      #   uses: appleboy/ssh-action@v1.0.3
+      #   with:
+      #     host: ${{ secrets.EC2_HOST }}
+      #     username: ${{ secrets.EC2_USER }}
+      #     key: ${{ secrets.EC2_KEY }}
+      #     script: |
+      #       cd /home/${{ secrets.EC2_USER }}/nextjs-app
+      #       tar -xzf deployment.tar.gz
+      #       rm deployment.tar.gz
+      #       npm ci --omit=dev || npm install --omit=dev --legacy-peer-deps
+      #       pm2 restart nextjs || pm2 start node_modules/next/dist/bin/next start --name nextjs -- -p 3000
