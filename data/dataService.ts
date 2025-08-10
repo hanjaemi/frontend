@@ -71,6 +71,13 @@ export type Difficulty = {
   lessonCount: number;
 };
 
+export type Exam = {
+  id: string;
+  question: string;
+  options: string[];
+  correctAnswer: number;
+};
+
 export type Lesson = {
   id: string;
   number: number;
@@ -78,6 +85,7 @@ export type Lesson = {
   description?: string;
   grammar: Grammar[];
   vocabulary: Vocabulary[];
+  exams: Exam[];
 };
 
 export type Grammar = {
@@ -187,7 +195,8 @@ export async function fetchLessonsForDifficulty(difficultyId: string): Promise<L
           meaning: v.meaning,
           context: v.context,
           type: mapVocabType(v.type)
-        }))
+        })),
+      exams: [] // Empty array for now since this function doesn't fetch exams
     }));
   } catch (error) {
     console.error('Error fetching lessons:', error);
@@ -315,7 +324,16 @@ export async function fetchLessonData(difficultyId: string, lessonId: string): P
         meaning: v.meaning,
         context: v.context,
         type: mapVocabType(v.type)
-      }))
+      })),
+      exams: data.exams.map(e => {
+        const options = safeParseJSON(e.options);
+        return {
+          id: `exam-${e.examId}`,
+          question: e.question,
+          options: options,
+          correctAnswer: parseInt(e.correctAnswer)
+        };
+      })
     };
   } catch (error) {
     console.error('Error fetching lesson data:', error);

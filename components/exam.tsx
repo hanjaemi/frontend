@@ -14,56 +14,7 @@ interface Question {
   correctAnswer: number;
 }
 
-const questions: Question[] = [
-  {
-    id: "1",
-    question: "Which is the correct formal way to say 'hello'?",
-    options: ["안녕", "안녕하세요", "안녕히 가세요", "안녕히 계세요"],
-    correctAnswer: 1,
-  },
-  {
-    id: "2",
-    question: "What is the meaning of '감사합니다'?",
-    options: ["Hello", "Goodbye", "Thank you", "I'm sorry"],
-    correctAnswer: 2,
-  },
-  {
-    id: "3",
-    question: "Which particle is used to mark the subject of a sentence?",
-    options: ["을/를", "이/가", "은/는", "에서"],
-    correctAnswer: 1,
-  },
-  {
-    id: "4",
-    question: "What is the correct way to say 'I like something' in Korean?",
-    options: [
-      "저는 ~을/를 좋아합니다",
-      "~을/를 좋아합니다",
-      "저는 ~을/를 좋아요",
-      "~을/를 좋아요",
-    ],
-    correctAnswer: 0,
-  },
-  {
-    id: "5",
-    question: "What is the meaning of the Korean word '도서관'?",
-    options: ["Library", "School", "University", "Bookstore"],
-    correctAnswer: 0,
-  },
-  {
-    id: "6",
-    question: "What is the correct way to say 'What is your name?' in Korean?",
-    options: [
-      "당신의 이름은 무엇입니까?",
-      "당신의 이름은?",
-      "당신의 이름을 알려주세요",
-      "당신의 이름을",
-    ],
-    correctAnswer: 0,
-  },
-];
-
-export function Test({ level }: { level: string }) {
+export function Test({ level, exams = [] }: { level: string; exams?: Question[] }) {
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [showResults, setShowResults] = useState(false);
 
@@ -73,7 +24,7 @@ export function Test({ level }: { level: string }) {
 
   const getScore = () => {
     return Object.entries(answers).reduce((score, [questionId, answer]) => {
-      const question = questions.find((q) => q.id === questionId);
+      const question = exams.find((q) => q.id === questionId);
       return score + (question?.correctAnswer === answer ? 1 : 0);
     }, 0);
   };
@@ -82,7 +33,14 @@ export function Test({ level }: { level: string }) {
     <div className="flex flex-col h-full rounded-lg">
       <ScrollArea className="flex-1">
         <div className="space-y-4">
-          {questions.map((question) => (
+          {exams.length === 0 ? (
+            <Card>
+              <CardContent className="p-4">
+                <p className="text-muted-foreground">No exam questions available for this lesson.</p>
+              </CardContent>
+            </Card>
+          ) : (
+            exams.map((question) => (
             <Card key={question.id}>
               <CardHeader className="py-3">
                 <CardTitle className="text-base">{question.question}</CardTitle>
@@ -124,13 +82,14 @@ export function Test({ level }: { level: string }) {
                 )}
               </CardContent>
             </Card>
-          ))}
+          ))
+          )}
           {showResults && (
             <Card>
               <CardContent className="p-4">
-                <p className="text-lg font-semibold">
-                  Your Score: {getScore()} out of {questions.length}
-                </p>
+                          <p className="text-lg font-semibold">
+            Your Score: {getScore()} out of {exams.length}
+          </p>
               </CardContent>
             </Card>
           )}
@@ -140,7 +99,7 @@ export function Test({ level }: { level: string }) {
         <Button
           className="h-9"
           onClick={handleSubmit}
-          disabled={Object.keys(answers).length !== questions.length}
+          disabled={Object.keys(answers).length !== exams.length}
         >
           Submit Test
         </Button>

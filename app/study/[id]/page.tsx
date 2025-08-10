@@ -103,13 +103,22 @@ export default function LevelPage({ params }: { params: { id: string } }) {
               : 'common'
           };
         }) || [],
-        vocabulary: selectedLesson.vocabs?.map((v: any) => ({
-          id: `vocab-${v.vocabId}`,
-          word: v.word,
-          meaning: v.meaning,
-          context: v.context,
-          type: mapVocabType(v.type)
-        })) || []
+                 vocabulary: selectedLesson.vocabs?.map((v: any) => ({
+           id: `vocab-${v.vocabId}`,
+           word: v.word,
+           meaning: v.meaning,
+           context: v.context,
+           type: mapVocabType(v.type)
+         })) || [],
+         exams: selectedLesson.exams?.map((e: any) => {
+           const options = safeParseJSON(e.options);
+           return {
+             id: `exam-${e.examId}`,
+             question: e.question,
+             options: options,
+             correctAnswer: parseInt(e.correctAnswer)
+           };
+         }) || []
       };
       
       setCurrentLessonData(transformedLesson);
@@ -211,7 +220,7 @@ export default function LevelPage({ params }: { params: { id: string } }) {
               <Summary level={selectedLessonId} />
             </TabsContent>
             <TabsContent value="test" className="flex-1 overflow-auto">
-              <Test level={selectedLessonId} />
+              <Test level={selectedLessonId} exams={currentLessonData?.exams || []} />
             </TabsContent>
           </Tabs>
         </Card>
