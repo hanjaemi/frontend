@@ -1,0 +1,55 @@
+name: CI/CD (frontend)
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies (with fallback)
+        run: |
+          npm ci || npm install --legacy-peer-deps
+
+      - name: Build (inject dummy OpenAI key)
+        env:
+          OPENAI_API_KEY: dummy
+          NEXT_TELEMETRY_DISABLED: 1
+        run: npm run build
+
+      - name: Package build
+        run: |
+          tar -czf deployment.tar.gz .next package.json package-lock.json public next.config.mjs
+
+      - name: Prepare target dir on EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            mkdir -p "/home/${{ secrets.EC2_USER }}/nextjs-app"
+
+      - name: Copy package to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+          source: "deployment.tar.gz"
+          target: "/home/${{ secrets.EC2_USER }}/nextjs-app"
