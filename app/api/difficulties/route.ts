@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   try {
-    const res = await fetch('http://3.35.22.146:8080/difficulties', {
+    const base = process.env.BACKEND_URL;
+    const res = await fetch(`${base}/difficulties`, {
       cache: 'no-store',
       headers: {
         'Content-Type': 'application/json',

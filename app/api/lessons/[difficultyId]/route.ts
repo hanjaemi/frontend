@@ -6,8 +6,9 @@ export async function GET(
 ) {
   try {
     const { difficultyId } = params;
+    const base = process.env.BACKEND_URL;
     
-    const response = await fetch(`http://3.35.22.146:8080/difficulty/${difficultyId}/lessons`, {
+    const response = await fetch(`${base}/difficulty/${difficultyId}/lessons`, {
       cache: 'no-store',
     });
 

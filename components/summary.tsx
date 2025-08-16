@@ -7,42 +7,19 @@ interface SummarySection {
   content: string[];
 }
 
-const summaryData: SummarySection[] = [
-  {
-    id: "1",
-    title: "Key Grammar Points",
-    content: [
-      "Basic sentence structure: Subject + Object + Verb",
-      "Formal vs. Informal speech levels",
-      "Past, Present, and Future tense markers",
-    ],
-  },
-  {
-    id: "2",
-    title: "Essential Vocabulary",
-    content: [
-      "Greetings and basic expressions",
-      "Numbers and counting systems",
-      "Common verbs and adjectives",
-    ],
-  },
-  {
-    id: "3",
-    title: "Cultural Notes",
-    content: [
-      "Honorific system in Korean language",
-      "Age-based speech levels",
-      "Cultural context for formal vs. informal speech",
-    ],
-  },
-];
-
-export function Summary({ level }: { level: string }) {
+export function Summary({ level, data }: { level: string; data?: SummarySection[] }) {
+  if (!data || data.length === 0) {
+    return (
+      <div className="flex flex-col h-full items-center justify-center">
+        <p className="text-muted-foreground">No summary available for this lesson.</p>
+      </div>
+    );
+  }
   return (
     <div className="flex flex-col h-full">
       <ScrollArea className="flex-1">
         <div className="space-y-3">
-          {summaryData.map((section) => (
+          {data.map((section) => (
             <Card key={section.id}>
               <CardHeader className="py-3">
                 <CardTitle>{section.title}</CardTitle>

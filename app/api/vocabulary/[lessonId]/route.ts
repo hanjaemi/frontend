@@ -5,7 +5,8 @@ export async function GET(
   { params }: { params: { lessonId: string } }
 ) {
   try {
-    const res = await fetch(`http://3.35.22.146:8080/vocabulary?lessonId=${params.lessonId}`, {
+    const base = process.env.BACKEND_URL;
+    const res = await fetch(`${base}/vocabulary?lessonId=${params.lessonId}`, {
       cache: 'no-store',
       headers: {
         'Content-Type': 'application/json',

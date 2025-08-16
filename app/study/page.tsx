@@ -11,7 +11,8 @@ type Difficulty = {
 };
 
 export default async function StudyPage() {
-  const res = await fetch("http://3.35.22.146:8080/difficulty", {
+  const base = process.env.BACKEND_URL;
+  const res = await fetch(`${base}/difficulty`, {
     cache: "no-store", // always fresh
   });
   if (!res.ok) throw new Error("Failed to load difficulty list");

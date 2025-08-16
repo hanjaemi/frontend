@@ -48,6 +48,7 @@ export default function LevelPage({ params }: { params: { id: string } }) {
   const [lessons, setLessons] = useState<any[]>([]);
   const [selectedLessonId, setSelectedLessonId] = useState<string>("1");
   const [isLoading, setIsLoading] = useState(true);
+  const [summarySections, setSummarySections] = useState<{ id: string; title: string; content: string[] }[]>([]);
 
 
   // Load lessons for the difficulty
@@ -122,8 +123,45 @@ export default function LevelPage({ params }: { params: { id: string } }) {
       };
       
       setCurrentLessonData(transformedLesson);
+      
+      // Extract summaries from the selected lesson data
+      if (selectedLesson.summaries && Array.isArray(selectedLesson.summaries)) {
+        const first = selectedLesson.summaries[0];
+        const parsed = parseSummaryContent(typeof first?.content === 'string' ? first.content : '');
+        setSummarySections(parsed);
+      } else {
+        setSummarySections([]); // Clear summaries if none found
+      }
     }
   }, [selectedLessonId, lessons, params.id]);
+
+  function parseSummaryContent(raw: string): { id: string; title: string; content: string[] }[] {
+    const titles = [
+      'Key Grammar Points',
+      'Essential Vocabulary',
+      'Cultural Notes'
+    ];
+    const sections: Record<string, string[]> = {
+      'Key Grammar Points': [],
+      'Essential Vocabulary': [],
+      'Cultural Notes': []
+    };
+    let current: string = 'Key Grammar Points';
+    if (!raw) return [];
+    const lines = raw.split('\n');
+    for (const rawLine of lines) {
+      const line = rawLine.trim();
+      if (!line) continue;
+      const heading = titles.find(t => line.toLowerCase().startsWith(t.toLowerCase()));
+      if (heading) {
+        current = heading;
+        continue;
+      }
+      const clean = line.replace(/^[-•\s]+/, '');
+      sections[current].push(clean);
+    }
+    return titles.map((t, idx) => ({ id: String(idx + 1), title: t, content: sections[t] }));
+  }
 
   const handleGrammarClick = useCallback((grammar: string) => {
     setSelectedGrammar(grammar);
@@ -217,7 +255,7 @@ export default function LevelPage({ params }: { params: { id: string } }) {
               />
             </TabsContent>
             <TabsContent value="summary" className="flex-1 overflow-auto">
-              <Summary level={selectedLessonId} />
+              <Summary level={selectedLessonId} data={summarySections} />
             </TabsContent>
             <TabsContent value="test" className="flex-1 overflow-auto">
               <Test level={selectedLessonId} exams={currentLessonData?.exams || []} />
